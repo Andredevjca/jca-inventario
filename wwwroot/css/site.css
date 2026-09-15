@@ -162,7 +162,7 @@ body.app-body {
 
 .app-header {
   height: var(--header-height);
-  background: #fff;
+  background: #f3f5f8;
   border-bottom: 1px solid #e6ebf1;
   display: flex;
   align-items: center;
@@ -332,6 +332,7 @@ body.sidebar-collapsed .app-content {
 }
 
 .status-pago { background: #edf2fb; color: #294b8f; }
+.status-ativo { background: #e5f5ef; color: #008577; }
 .status-pendente { background: #fff6df; color: #a07500; }
 .status-atrasado { background: #fdecee; color: #b42318; }
 .status-cancelado { background: #eef1f4; color: #526173; }

@@ -35,7 +35,8 @@ public static class Formatador
     {
         return status switch
         {
-            "Ativo" or "Conferido" or "Disponível" or "Em uso" or "Encerrado" => "status-pago",
+            "Ativo" => "status-ativo",
+            "Conferido" or "Disponível" or "Em uso" or "Encerrado" => "status-pago",
             "Em manutenção" or "Pendente" or "Home Office" => "status-pendente",
             "Divergência" or "Baixado" or "Inativo" => "status-atrasado",
             _ => "status-info"
