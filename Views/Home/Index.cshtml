@@ -5,10 +5,10 @@
 }
 @{
     var totais = Model.totais;
-    var porSetor = Formatador.Lista(Model.porSetor);
-    var porLocalizacao = Formatador.Lista(Model.porLocalizacao);
-    var porStatus = Formatador.Lista(Model.porStatus);
-    var recentes = Formatador.Lista(Model.recentes);
+    var porSetor = Formatador.Lista((object?)Model.porSetor);
+    var porLocalizacao = Formatador.Lista((object?)Model.porLocalizacao);
+    var porStatus = Formatador.Lista((object?)Model.porStatus);
+    var recentes = Formatador.Lista((object?)Model.recentes);
     var total = Convert.ToInt32(totais.Total ?? 0);
     var indicadores = new (string Titulo, object Valor, string Icone, string Cor)[]
     {

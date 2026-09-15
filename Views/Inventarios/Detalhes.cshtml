@@ -1,7 +1,7 @@
 @model dynamic
 @{
     var inventario = Model.inventario;
-    var itens = Formatador.Lista(Model.itens).ToList();
+    var itens = Formatador.Lista((object?)Model.itens).ToList();
     var encerrado = Convert.ToBoolean(inventario.Encerrado);
 }
 <div class="page-header">

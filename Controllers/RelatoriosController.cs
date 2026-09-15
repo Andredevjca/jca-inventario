@@ -22,7 +22,7 @@ public class RelatoriosController : Controller
             (string.IsNullOrWhiteSpace(status) || Convert.ToString(item.Status) == status)
             && (string.IsNullOrWhiteSpace(localizacao) || Convert.ToString(item.Localizacao) == localizacao)).ToList();
         ViewBag.Total = itens.Count;
-        ViewBag.Valor = itens.Sum(item => Convert.ToDecimal(item.ValorAquisicao ?? 0));
+        ViewBag.Valor = itens.Sum(item => Convert.ToDecimal((object?)item.ValorAquisicao ?? 0m));
         return View(itens);
     }
 }
