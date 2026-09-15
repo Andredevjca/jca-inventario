@@ -3,6 +3,7 @@
 [Oo]bj/
 /artifacts/
 /publish/
+/publicacao/
 *.nupkg
 *.snupkg
 
@@ -14,6 +15,7 @@
 *.userosscache
 *.sln.docstates
 *.sln.iml
+*.rsuser
 
 # Perfis de publicacao podem conter credenciais locais
 Properties/PublishProfiles/
@@ -34,6 +36,13 @@ logs/
 *.swp
 *.swo
 ~$*
+
+# Dados locais: MySQL, credenciais, fotos, chaves e arquivos de trabalho
+/Dados/
+
+# Dependencias e caches de ferramentas frontend
+node_modules/
+.npm/
 
 .env
 .env.*

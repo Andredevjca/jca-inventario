@@ -8,9 +8,9 @@ namespace JcaInventario.Repositories;
 
 public class RepositorioInicializacao : IRepositorioInicializacao
 {
-    private readonly ConexaoBanco _conexao;
+    private readonly Banco _conexao;
 
-    public RepositorioInicializacao(ConexaoBanco conexao)
+    public RepositorioInicializacao(Banco conexao)
     {
         _conexao = conexao;
     }

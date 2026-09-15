@@ -4,6 +4,26 @@ using JcaInventario.Repositories;
 using JcaInventario.Servicos;
 using Microsoft.Extensions.Configuration;
 using System.Text;
+using JcaInventario.Dependecias;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+if (args.Contains("--somente-di"))
+{
+    var construtor = WebApplication.CreateBuilder(Array.Empty<string>());
+    construtor.Host.UseDefaultServiceProvider(opcoes =>
+    {
+        opcoes.ValidateOnBuild = true;
+        opcoes.ValidateScopes = true;
+    });
+    construtor.Services.AdicionarDependencias();
+    await using var aplicacao = construtor.Build();
+    await using var escopo = aplicacao.Services.CreateAsyncScope();
+    _ = escopo.ServiceProvider.GetRequiredService<ServicoInicializacao>();
+    Console.WriteLine("OK: dependencias validadas e ServicoInicializacao resolvido sem acessar o MySQL.");
+    return;
+}
 
 var conexaoTeste = Environment.GetEnvironmentVariable("JCA_CONEXAO_TESTE") ?? throw new InvalidOperationException("Informe JCA_CONEXAO_TESTE apontando para um banco exclusivo de testes.");
 var configuracaoConexao = new MySqlConnector.MySqlConnectionStringBuilder(conexaoTeste);
