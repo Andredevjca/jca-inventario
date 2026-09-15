@@ -127,6 +127,11 @@ body.app-body {
 .sidebar-brand strong { color: #fff; display: block; font-size: var(--app-font-size); }
 .sidebar-brand small { color: #8ea0b5; }
 
+.marca-completa { display: block; max-width: 100%; height: auto; }
+.marca-recolhida { display: none; flex-shrink: 0; }
+body.sidebar-collapsed .sidebar-brand .marca-completa { display: none; }
+body.sidebar-collapsed .sidebar-brand .marca-recolhida { display: block; }
+
 .sidebar-menu {
   list-style: none;
   margin: 0;
