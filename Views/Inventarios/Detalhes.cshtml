@@ -1,0 +1,65 @@
+@model dynamic
+@{
+    var inventario = Model.inventario;
+    var itens = Formatador.Lista(Model.itens).ToList();
+    var encerrado = Convert.ToBoolean(inventario.Encerrado);
+}
+<div class="page-header">
+    <div>
+        <h1>@inventario.Nome</h1>
+        <p class="text-muted mb-0">Total: @itens.Count</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
+        @if (!encerrado)
+        {
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalExclusao" data-url="@Url.Action("Encerrar", new { id = inventario.Id })" data-mensagem="Encerrar este inventário? As conferências ficarão apenas para consulta.">Encerrar inventário</button>
+        }
+    </div>
+</div>
+<div class="content-card p-3">
+    <div class="table-responsive">
+        <table class="table table-modern">
+            <thead>
+                <tr>
+                    <th>Patrimônio</th>
+                    <th>Equipamento</th>
+                    <th>Responsável</th>
+                    <th>Localização</th>
+                    <th>Situação</th>
+                    <th>Observação</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in itens)
+                {
+                    <tr>
+                        <td>@Formatador.Texto(item.NumeroPatrimonio)</td>
+                        <td>@item.Modelo</td>
+                        <td>@Formatador.Texto(item.Responsavel)</td>
+                        <td>@item.Localizacao</td>
+                        <td><span class="status-badge @Formatador.ClasseStatus(Convert.ToString(item.Situacao))">@item.Situacao</span></td>
+                        <td>@Formatador.Texto(item.Observacao)</td>
+                        <td>
+                            @if (!encerrado)
+                            {
+                                <form asp-action="Conferir" asp-route-id="@inventario.Id" method="post" class="d-flex gap-2">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="equipamentoId" value="@item.EquipamentoId" />
+                                    <select name="Situacao" class="form-select form-select-sm">
+                                        <option selected="@(Convert.ToString(item.Situacao) == "Conferido")">Conferido</option>
+                                        <option selected="@(Convert.ToString(item.Situacao) == "Pendente")">Pendente</option>
+                                        <option selected="@(Convert.ToString(item.Situacao) == "Divergência")">Divergência</option>
+                                    </select>
+                                    <input name="Observacao" class="form-control form-control-sm" placeholder="Obs." value="@item.Observacao" />
+                                    <button class="btn btn-sm btn-outline-secondary">Salvar</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

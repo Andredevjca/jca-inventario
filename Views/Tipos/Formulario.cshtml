@@ -1,0 +1,26 @@
+@model Cadastro
+<div class="page-header"><div><h1>@(Model.Id == 0 ? "Novo tipo" : "Editar tipo")</h1></div></div>
+<form method="post" class="content-card p-4">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row g-3">
+        <div class="col-md-8">
+            <label asp-for="Nome" class="form-label"></label>
+            <input asp-for="Nome" class="form-control" />
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <div class="form-check">
+                <input asp-for="Ativo" class="form-check-input" />
+                <label asp-for="Ativo" class="form-check-label"></label>
+            </div>
+        </div>
+        <div class="col-12">
+            <label asp-for="Observacoes" class="form-label"></label>
+            <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
+        </div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-success btn-modern">Salvar</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Cancelar</a>
+    </div>
+</form>

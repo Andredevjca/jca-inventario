@@ -1,0 +1,67 @@
+@model LoginViewModel
+@{
+    Layout = "_LayoutLogin";
+    ViewData["Title"] = "Entrar";
+}
+<div class="login-wrap">
+    <aside class="login-aside">
+        <div>
+            <div class="login-brand">
+                <div class="login-logo"><i class="fa-solid fa-laptop"></i></div>
+                <div>
+                    <strong>JCA Soluções</strong>
+                    <small>Inventário de equipamentos</small>
+                </div>
+            </div>
+            <div class="login-hide">
+                <span class="login-eyebrow">CONTROLE PATRIMONIAL</span>
+                <h2>Seus equipamentos. Tudo em ordem.</h2>
+                <p>Controle os equipamentos, seus responsáveis e cada movimentação em um só lugar.</p>
+                <ul class="login-features">
+                    <li><i class="fa-solid fa-laptop"></i> Equipamentos e configurações</li>
+                    <li><i class="fa-solid fa-users"></i> Funcionários e setores</li>
+                    <li><i class="fa-solid fa-clock-rotate-left"></i> Histórico e manutenções</li>
+                    <li><i class="fa-solid fa-clipboard-check"></i> Inventário e conferência</li>
+                </ul>
+            </div>
+        </div>
+        <div class="login-footer">Acesso restrito a usuários autorizados</div>
+    </aside>
+    <div class="login-panel">
+        <main class="login-main">
+            <div class="login-card">
+                <div class="login-access-icon"><i class="fa-solid fa-user-lock"></i></div>
+                <span class="login-eyebrow">BEM-VINDO DE VOLTA</span>
+                <h1>Acessar o sistema</h1>
+                <p class="sub">Informe seu e-mail e senha para continuar</p>
+                <form asp-controller="Conta" asp-action="Entrar" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                    <div asp-validation-summary="ModelOnly" class="erro mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="Email"></label>
+                        <div class="campo">
+                            <span><i class="fa-solid fa-envelope"></i></span>
+                            <input asp-for="Email" placeholder="seu@email.com" autocomplete="username" />
+                        </div>
+                        <span asp-validation-for="Email" class="erro"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Senha"></label>
+                        <div class="campo">
+                            <span><i class="fa-solid fa-lock"></i></span>
+                            <input asp-for="Senha" autocomplete="current-password" />
+                        </div>
+                        <span asp-validation-for="Senha" class="erro"></span>
+                    </div>
+                    <label class="login-check">
+                        <input asp-for="Lembrar" />
+                        <span>Lembrar-me</span>
+                    </label>
+                    <button type="submit" class="login-btn">Entrar no sistema <i class="fa-solid fa-arrow-right"></i></button>
+                </form>
+                <div class="login-hint">Gestão de ativos · JCA Soluções</div>
+            </div>
+        </main>
+    </div>
+</div>

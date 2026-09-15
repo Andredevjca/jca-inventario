@@ -1,0 +1,64 @@
+@model IEnumerable<dynamic>
+<div class="page-header">
+    <div>
+        <h1>Relatórios</h1>
+        <p class="text-muted mb-0">Filtre o patrimônio e acompanhe os totais.</p>
+    </div>
+</div>
+<form class="content-card p-3 mb-3" method="get">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var status in JcaInventario.Configuracoes.OpcoesInventario.Status)
+                {
+                    <option value="@status" selected="@(ViewBag.Status as string == status)">@status</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Localização</label>
+            <select name="localizacao" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var local in JcaInventario.Configuracoes.OpcoesInventario.Localizacoes)
+                {
+                    <option value="@local" selected="@(ViewBag.Localizacao as string == local)">@local</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4"><button class="btn btn-outline-secondary w-100">Filtrar</button></div>
+    </div>
+</form>
+<div class="content-card p-3 mb-3">Equipamentos filtrados: @ViewBag.Total · Valor de aquisição: @Formatador.Moeda((decimal)ViewBag.Valor)</div>
+<div class="content-card p-3">
+    <div class="table-responsive">
+        <table class="table table-modern">
+            <thead>
+                <tr>
+                    <th>Patrimônio</th>
+                    <th>Tipo</th>
+                    <th>Modelo</th>
+                    <th>Responsável</th>
+                    <th>Setor</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Formatador.Texto(item.NumeroPatrimonio)</td>
+                    <td>@item.Tipo</td>
+                    <td>@item.Modelo</td>
+                    <td>@Formatador.Texto(item.Responsavel)</td>
+                    <td>@Formatador.Texto(item.Setor)</td>
+                    <td>@item.Status</td>
+                    <td>@Formatador.Moeda(Convert.ToDecimal(item.ValorAquisicao ?? 0))</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

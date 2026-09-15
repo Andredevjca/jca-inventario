@@ -1,0 +1,84 @@
+@model dynamic
+@{
+    var equipamento = Model.equipamento;
+    var movimentacoes = Formatador.Lista(Model.movimentacoes);
+    var manutencoes = Formatador.Lista(Model.manutencoes);
+    var historico = Formatador.Lista(Model.historico);
+}
+<div class="page-header">
+    <div>
+        <h1>@equipamento.Marca @equipamento.Modelo</h1>
+        <p class="text-muted mb-0">@Formatador.Texto(equipamento.NumeroPatrimonio) · @equipamento.Tipo</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
+        <a class="btn btn-outline-secondary" asp-action="Editar" asp-route-id="@equipamento.Id">Editar</a>
+        <a class="btn btn-success" asp-action="Movimentar" asp-route-id="@equipamento.Id">Movimentar</a>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-8">
+        <section class="content-card p-3 mb-3">
+            <h2 class="fw-bold mb-3">Identificação</h2>
+            <dl class="row detalhe-campo mb-0">
+                <div class="col-md-6"><dt>Tipo</dt><dd>@equipamento.Tipo</dd></div>
+                <div class="col-md-6"><dt>Marca</dt><dd>@equipamento.Marca</dd></div>
+                <div class="col-md-6"><dt>Modelo</dt><dd>@equipamento.Modelo</dd></div>
+                <div class="col-md-6"><dt>Patrimônio</dt><dd>@Formatador.Texto(equipamento.NumeroPatrimonio)</dd></div>
+                <div class="col-md-6"><dt>Número de série</dt><dd>@Formatador.Texto(equipamento.NumeroSerie)</dd></div>
+                <div class="col-md-6"><dt>Status</dt><dd><span class="status-badge @Formatador.ClasseStatus(Convert.ToString(equipamento.Status))">@equipamento.Status</span></dd></div>
+            </dl>
+        </section>
+        <section class="content-card p-3 mb-3">
+            <h2 class="fw-bold mb-3">Responsável e localização</h2>
+            <dl class="row detalhe-campo mb-0">
+                <div class="col-md-6"><dt>Funcionário</dt><dd>@Formatador.Texto(equipamento.Responsavel)</dd></div>
+                <div class="col-md-6"><dt>Setor</dt><dd>@Formatador.Texto(equipamento.Setor)</dd></div>
+                <div class="col-md-6"><dt>Localização</dt><dd>@equipamento.Localizacao</dd></div>
+                <div class="col-md-6"><dt>Observações</dt><dd>@Formatador.Texto(equipamento.Observacoes)</dd></div>
+            </dl>
+        </section>
+    </div>
+    <div class="col-lg-4">
+        <section class="content-card p-3 mb-3">
+            <h2 class="fw-bold mb-3">Foto</h2>
+            @if (equipamento.Foto != null)
+            {
+                <img class="foto-detalhe" src="@Url.Action("Foto", new { id = equipamento.Id })" alt="Foto do equipamento" />
+            }
+            else
+            {
+                <span class="foto-detalhe d-grid sem-foto"><i class="fa-solid fa-laptop"></i></span>
+            }
+        </section>
+        <section class="content-card p-3 mb-3">
+            <div class="d-grid gap-2">
+                @if (equipamento.ResponsavelId != null)
+                {
+                    <a class="btn btn-outline-secondary" asp-action="Termo" asp-route-id="@equipamento.Id"><i class="fa-solid fa-file-pdf"></i> Termo de responsabilidade</a>
+                }
+                <a class="btn btn-outline-secondary" asp-controller="Manutencoes" asp-action="Criar"><i class="fa-solid fa-screwdriver-wrench"></i> Registrar manutenção</a>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="content-card p-3 mb-3">
+    <h2 class="fw-bold mb-3">Movimentações</h2>
+    <partial name="Componentes/_TabelaMovimentacoes" model="movimentacoes" />
+</section>
+<section class="content-card p-3">
+    <h2 class="fw-bold mb-3">Histórico</h2>
+    <div class="timeline">
+        @foreach (var item in historico)
+        {
+            <div class="timeline-item">
+                <strong>@item.Descricao</strong>
+                <div class="text-muted">@Formatador.DataHora(item.Data as DateTime?) · @item.Usuario</div>
+            </div>
+        }
+        @if (!historico.Any())
+        {
+            <p class="text-muted">Nenhuma alteração registrada.</p>
+        }
+    </div>
+</section>

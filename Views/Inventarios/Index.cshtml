@@ -1,0 +1,42 @@
+@model IEnumerable<dynamic>
+<div class="page-header">
+    <div>
+        <h1>Inventários físicos</h1>
+        <p class="text-muted mb-0">Conferência dos equipamentos ativos em cada período.</p>
+    </div>
+    <a class="btn btn-success btn-modern" asp-action="Criar"><i class="fa-solid fa-plus"></i> Novo inventário</a>
+</div>
+<div class="content-card p-3">
+    <div class="table-responsive">
+        <table class="table table-modern">
+            <thead>
+                <tr>
+                    <th>Inventário</th>
+                    <th>Data</th>
+                    <th>Total</th>
+                    <th>Conferidos</th>
+                    <th>Pendentes</th>
+                    <th>Divergências</th>
+                    <th>Situação</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var encerrado = Convert.ToBoolean(item.Encerrado);
+                    <tr>
+                        <td>@item.Nome</td>
+                        <td>@Formatador.Data(item.Data as DateTime?)</td>
+                        <td>@item.Total</td>
+                        <td>@item.Conferidos</td>
+                        <td>@item.Pendentes</td>
+                        <td>@item.Divergencias</td>
+                        <td><span class="status-badge @Formatador.ClasseStatus(encerrado ? "Encerrado" : "Em uso")">@(encerrado ? "Encerrado" : "Em andamento")</span></td>
+                        <td><a class="btn btn-outline-secondary" asp-action="Detalhes" asp-route-id="@item.Id">Abrir conferência</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

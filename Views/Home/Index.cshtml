@@ -1,0 +1,86 @@
+@model dynamic
+@if (ViewBag.ErroBanco is string erroBanco)
+{
+    <div class="alert alert-warning">@erroBanco</div>
+}
+@{
+    var totais = Model.totais;
+    var porSetor = Formatador.Lista(Model.porSetor);
+    var porLocalizacao = Formatador.Lista(Model.porLocalizacao);
+    var porStatus = Formatador.Lista(Model.porStatus);
+    var recentes = Formatador.Lista(Model.recentes);
+    var total = Convert.ToInt32(totais.Total ?? 0);
+    var indicadores = new (string Titulo, object Valor, string Icone, string Cor)[]
+    {
+        ("Total de equipamentos", totais.Total, "laptop", "green"),
+        ("Em uso", totais.EmUso, "user-check", "blue"),
+        ("Em estoque", totais.EmEstoque, "boxes-stacked", "purple"),
+        ("Em manutenção", totais.EmManutencao, "screwdriver-wrench", "yellow"),
+        ("Home Office", totais.HomeOffice, "house-laptop", "blue"),
+        ("Baixados", totais.Baixados, "box-archive", "red")
+    };
+}
+<div class="page-header">
+    <div>
+        <h1>Dashboard</h1>
+        <p class="text-muted mb-0">Visão geral do patrimônio da JCA Soluções</p>
+    </div>
+    <a class="btn btn-success btn-modern" asp-controller="Equipamentos" asp-action="Index"><i class="fa-solid fa-laptop"></i> Ver equipamentos</a>
+</div>
+<div class="row g-3 mb-4">
+    @foreach (var item in indicadores)
+    {
+        <div class="col-sm-6 col-xl-2">
+            <div class="card-dashboard">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="label">@item.Titulo</div>
+                        <div class="valor-indicador">@item.Valor</div>
+                    </div>
+                    <div class="icon-wrap bg-soft-@item.Cor"><i class="fa-solid fa-@item.Icone"></i></div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div class="row g-3 mb-4">
+    @foreach (var grafico in new[] { ("Equipamentos por setor", porSetor), ("Equipamentos por localização", porLocalizacao), ("Equipamentos por status", porStatus) })
+    {
+        <div class="col-lg-4">
+            <section class="content-card p-3 h-100">
+                <h2 class="fw-bold mb-3">@grafico.Item1</h2>
+                @if (!grafico.Item2.Any())
+                {
+                    <p class="text-muted">Cadastre equipamentos para visualizar a distribuição.</p>
+                }
+                else
+                {
+                    foreach (var item in grafico.Item2)
+                    {
+                        var quantidade = Convert.ToInt32(item.Total);
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1"><span>@item.Nome</span><strong>@quantidade</strong></div>
+                            <div class="barra-resumo"><span style="width:@Math.Round(quantidade / (double)Math.Max(total, 1) * 100)%"></span></div>
+                        </div>
+                    }
+                }
+            </section>
+        </div>
+    }
+</div>
+<section class="content-card p-3 mb-4">
+    <h2 class="fw-bold mb-3">Alertas do inventário</h2>
+    <div class="row g-2">
+        @foreach (var alerta in new (string Titulo, object Valor)[] { ("Sem responsável", totais.SemResponsavel), ("Em manutenção", totais.EmManutencao), ("Sem patrimônio", totais.SemPatrimonio), ("Sem número de série", totais.SemSerie), ("Pendentes de conferência", Model.pendentes) })
+        {
+            <div class="col"><div class="p-3 bg-soft-yellow rounded"><strong>@alerta.Valor</strong><div>@alerta.Titulo</div></div></div>
+        }
+    </div>
+</section>
+<section class="content-card p-3">
+    <div class="d-flex justify-content-between mb-3">
+        <h2 class="fw-bold">Últimas movimentações</h2>
+        <a asp-controller="Movimentacoes" asp-action="Index">Ver todas</a>
+    </div>
+    <partial name="Componentes/_TabelaMovimentacoes" model="recentes" />
+</section>

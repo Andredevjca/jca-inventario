@@ -1,0 +1,49 @@
+@model IEnumerable<dynamic>
+<div class="page-header">
+    <div>
+        <h1>Manutenções</h1>
+        <p class="text-muted mb-0">Entradas, soluções, custos e retorno dos equipamentos.</p>
+    </div>
+    <a class="btn btn-success btn-modern" asp-action="Criar"><i class="fa-solid fa-plus"></i> Nova manutenção</a>
+</div>
+<div class="content-card p-3">
+    <div class="table-responsive">
+        <table class="table table-modern">
+            <thead>
+                <tr>
+                    <th>Patrimônio</th>
+                    <th>Equipamento</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th>Tipo</th>
+                    <th>Problema</th>
+                    <th>Valor</th>
+                    <th>Situação</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var encerrada = item.DataSaida != null;
+                    <tr>
+                        <td>@Formatador.Texto(item.NumeroPatrimonio)</td>
+                        <td>@item.Modelo</td>
+                        <td>@Formatador.Data(item.DataEntrada as DateTime?)</td>
+                        <td>@Formatador.Data(item.DataSaida as DateTime?)</td>
+                        <td>@item.Tipo</td>
+                        <td>@item.Problema</td>
+                        <td>@Formatador.Moeda(Convert.ToDecimal(item.Valor ?? 0))</td>
+                        <td><span class="status-badge @Formatador.ClasseStatus(encerrada ? "Encerrado" : "Em manutenção")">@(encerrada ? "Encerrado" : "Em manutenção")</span></td>
+                        <td>
+                            @if (!encerrada)
+                            {
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"><i class="fa-solid fa-pen"></i></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

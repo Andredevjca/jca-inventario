@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "Dashboard") - JCA Inventário</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@200..1000&amp;display=swap" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/inventario.css" asp-append-version="true" />
+</head>
+<body class="app-body">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="logo-mark"><i class="fa-solid fa-laptop"></i></div>
+            <div class="brand-text">
+                <strong>JCA Soluções</strong>
+                <small>Inventário de equipamentos</small>
+            </div>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-label">Menu principal</li>
+            <li><a asp-controller="Home" asp-action="Index" title="Dashboard" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"><i class="fa-solid fa-gauge-high"></i><span class="menu-texto">Dashboard</span></a></li>
+            <li class="menu-label">Inventário</li>
+            <li><a asp-controller="Equipamentos" asp-action="Index" title="Equipamentos" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Equipamentos" ? "active" : "")"><i class="fa-solid fa-laptop"></i><span class="menu-texto">Equipamentos</span></a></li>
+            <li><a asp-controller="Movimentacoes" asp-action="Index" title="Movimentações" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Movimentacoes" ? "active" : "")"><i class="fa-solid fa-arrow-right-arrow-left"></i><span class="menu-texto">Movimentações</span></a></li>
+            <li><a asp-controller="Manutencoes" asp-action="Index" title="Manutenções" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Manutencoes" ? "active" : "")"><i class="fa-solid fa-screwdriver-wrench"></i><span class="menu-texto">Manutenções</span></a></li>
+            <li><a asp-controller="Inventarios" asp-action="Index" title="Inventários" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Inventarios" ? "active" : "")"><i class="fa-solid fa-clipboard-check"></i><span class="menu-texto">Inventários</span></a></li>
+            <li class="menu-label">Cadastros</li>
+            <li><a asp-controller="Funcionarios" asp-action="Index" title="Funcionários" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Funcionarios" ? "active" : "")"><i class="fa-solid fa-users"></i><span class="menu-texto">Funcionários</span></a></li>
+            <li><a asp-controller="Setores" asp-action="Index" title="Setores" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Setores" ? "active" : "")"><i class="fa-solid fa-building"></i><span class="menu-texto">Setores</span></a></li>
+            <li><a asp-controller="Tipos" asp-action="Index" title="Tipos" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Tipos" ? "active" : "")"><i class="fa-solid fa-tags"></i><span class="menu-texto">Tipos de equipamento</span></a></li>
+            <li class="menu-label">Consultas</li>
+            <li><a asp-controller="Relatorios" asp-action="Index" title="Relatórios" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Relatorios" ? "active" : "")"><i class="fa-solid fa-chart-column"></i><span class="menu-texto">Relatórios</span></a></li>
+            @if (User.IsInRole("Administrador"))
+            {
+                <li class="menu-label">Configurações</li>
+                <li><a asp-controller="Usuarios" asp-action="Index" title="Usuários" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Usuarios" ? "active" : "")"><i class="fa-solid fa-user-gear"></i><span class="menu-texto">Usuários</span></a></li>
+            }
+        </ul>
+    </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <div class="app-content">
+        <header class="app-header">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-outline-secondary btn-modern" id="botaoSidebar" type="button" aria-label="Recolher menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div>
+                    <div class="text-muted small">Painel administrativo</div>
+                    <strong>@(ViewData["Title"] ?? "Dashboard")</strong>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown">
+                    <button class="btn btn-light btn-modern d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-circle-user"></i>
+                        <span>@User.Identity?.Name</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" asp-controller="Conta" asp-action="Sair"><i class="fa-solid fa-right-from-bracket me-2"></i>Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        <main class="app-main" tabindex="-1">
+            @if (TempData["Sucesso"] is string sucesso)
+            {
+                <div class="alert alert-success">@sucesso</div>
+            }
+            @if (TempData["Erro"] is string erro)
+            {
+                <div class="alert alert-danger">@erro</div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+
+    <div class="modal fade" id="modalExclusao" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar ação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p data-mensagem-exclusao>Tem certeza que deseja continuar?</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

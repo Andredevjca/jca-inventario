@@ -1,0 +1,117 @@
+@model Equipamento
+<div class="page-header">
+    <div>
+        <h1>@(Model.Id == 0 ? "Novo equipamento" : "Editar equipamento")</h1>
+        <p class="text-muted mb-0">Identificação, situação e configuração</p>
+    </div>
+</div>
+<form method="post" enctype="multipart/form-data" class="content-card p-4">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label asp-for="TipoId" class="form-label"></label>
+            <select asp-for="TipoId" class="form-select">
+                <option value="">Selecione</option>
+                @foreach (var tipo in Formatador.Lista(ViewBag.Tipos))
+                {
+                    if (Convert.ToBoolean(tipo.Ativo) || tipo.Id == Model.TipoId)
+                    {
+                        <option value="@tipo.Id">@tipo.Nome</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="TipoId" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Marca" class="form-label"></label>
+            <input asp-for="Marca" class="form-control" />
+            <span asp-validation-for="Marca" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Modelo" class="form-label"></label>
+            <input asp-for="Modelo" class="form-control" />
+            <span asp-validation-for="Modelo" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="NumeroPatrimonio" class="form-label"></label>
+            <input asp-for="NumeroPatrimonio" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="NumeroSerie" class="form-label"></label>
+            <input asp-for="NumeroSerie" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="DataAquisicao" class="form-label"></label>
+            <input asp-for="DataAquisicao" class="form-control" type="date" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="ValorAquisicao" class="form-label"></label>
+            <input asp-for="ValorAquisicao" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" class="form-select">
+                @foreach (var status in (IEnumerable<string>)ViewBag.Status)
+                {
+                    <option>@status</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Localizacao" class="form-label"></label>
+            <select asp-for="Localizacao" class="form-select">
+                @foreach (var local in (IEnumerable<string>)ViewBag.Localizacoes)
+                {
+                    <option>@local</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ResponsavelId" class="form-label"></label>
+            <select asp-for="ResponsavelId" class="form-select">
+                <option value="">Sem responsável</option>
+                @foreach (var funcionario in Formatador.Lista(ViewBag.Funcionarios))
+                {
+                    if (Convert.ToBoolean(funcionario.Ativo) || funcionario.Id == Model.ResponsavelId)
+                    {
+                        <option value="@funcionario.Id">@funcionario.Nome</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Processador" class="form-label"></label>
+            <input asp-for="Processador" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="MemoriaRam" class="form-label"></label>
+            <input asp-for="MemoriaRam" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Armazenamento" class="form-label"></label>
+            <input asp-for="Armazenamento" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="SistemaOperacional" class="form-label"></label>
+            <input asp-for="SistemaOperacional" class="form-control" />
+        </div>
+        <div class="col-12">
+            <label asp-for="Observacoes" class="form-label"></label>
+            <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Foto</label>
+            <input type="file" name="arquivo" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+            @if (!string.IsNullOrWhiteSpace(Model.Foto))
+            {
+                <img class="previa-foto mt-2" src="@Url.Action("Foto", new { id = Model.Id })" alt="Foto atual" />
+                <label class="form-check mt-2"><input type="checkbox" name="removerFoto" value="true" class="form-check-input" /> Remover foto</label>
+            }
+        </div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-success btn-modern"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Cancelar</a>
+    </div>
+</form>

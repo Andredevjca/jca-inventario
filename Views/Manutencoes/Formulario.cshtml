@@ -1,0 +1,62 @@
+@model Manutencao
+<div class="page-header">
+    <div>
+        <h1>@(Model.Id == 0 ? "Nova manutenção" : "Atualizar manutenção")</h1>
+    </div>
+</div>
+<form method="post" class="content-card p-4">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="EquipamentoId" class="form-label"></label>
+            <select asp-for="EquipamentoId" class="form-select" disabled="@(Model.Id > 0)">
+                <option value="">Selecione</option>
+                @foreach (var item in Formatador.Lista(ViewBag.Equipamentos))
+                {
+                    <option value="@item.Id">@Formatador.Texto(item.NumeroPatrimonio) · @item.Marca @item.Modelo</option>
+                }
+            </select>
+            @if (Model.Id > 0)
+            {
+                <input type="hidden" asp-for="EquipamentoId" />
+            }
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Tipo" class="form-label"></label>
+            <input asp-for="Tipo" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="DataEntrada" class="form-label"></label>
+            <input asp-for="DataEntrada" class="form-control" type="date" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="DataSaida" class="form-label"></label>
+            <input asp-for="DataSaida" class="form-control" type="date" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Valor" class="form-label"></label>
+            <input asp-for="Valor" class="form-control" />
+        </div>
+        <div class="col-12">
+            <label asp-for="Problema" class="form-label"></label>
+            <textarea asp-for="Problema" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="col-12">
+            <label asp-for="Solucao" class="form-label"></label>
+            <textarea asp-for="Solucao" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Responsavel" class="form-label"></label>
+            <input asp-for="Responsavel" class="form-control" />
+        </div>
+        <div class="col-12">
+            <label asp-for="Observacoes" class="form-label"></label>
+            <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
+        </div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-success btn-modern">Salvar</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Cancelar</a>
+    </div>
+</form>
