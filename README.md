@@ -114,7 +114,15 @@ Get-Content .\wwwroot\js\aplicacao.js -Raw | node --check
 dotnet publish -c Release -o publicacao
 ```
 
-Mantenha `Infraestrutura/estrutura.sql` junto à aplicação publicada. Configure a conexão no ambiente de destino e use HTTPS no servidor/proxy. Em produção Windows, as chaves de sessão persistem em `Dados/Chaves` protegidas por DPAPI para a conta do processo. Em desenvolvimento, as sessões são temporárias e exigem novo login ao reiniciar.
+Mantenha `Database/estrutura.sql` junto à aplicação publicada. Configure a conexão no ambiente de destino e use HTTPS no servidor/proxy. Em produção Windows, as chaves de sessão persistem em `Dados/Chaves` protegidas por DPAPI para a conta do processo. Em desenvolvimento, as sessões são temporárias e exigem novo login ao reiniciar.
 
 Inclua o banco MySQL e `Dados/Fotos` no backup. Restrinja o acesso aos arquivos de configuração, às chaves e à pasta de dados. Nunito e Font Awesome são carregados por CDN; Bootstrap e o CSS principal estão no próprio projeto.
 
+
+## PDF do inventário por setor
+
+Na lista de inventários, use **PDF por setor**, ou abra um inventário e clique em **Exportar PDF por setor**. A exportação funciona para inventários em andamento e encerrados e inclui resumo geral, totais por setor, identificação dos equipamentos, responsáveis, localização, status, conferências e observações.
+
+Os novos inventários preservam os dados dos equipamentos na criação, na tabela `inventario_equipamentos`. Alterações posteriores nos equipamentos, funcionários e setores não modificam esses dados. A conferência continua editável até o encerramento.
+
+Ao reiniciar a aplicação atualizada, o script `Database/estrutura.sql` cria a tabela e captura os dados disponíveis dos inventários antigos que ainda não possuem histórico detalhado. Essa captura não reconstitui a situação original: a tela e o PDF identificam esses registros como legados, e o PDF informa a data da captura. Novas inicializações preservam as cópias existentes.

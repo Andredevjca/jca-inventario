@@ -9,6 +9,7 @@ public interface IServicoInventario
     Task<object> ListarInventariosAsync();
     Task<object> CriarInventarioAsync(NovoInventarioViewModel inventario, int usuario);
     Task<object> ObterConferenciasAsync(int id);
+    Task<byte[]> GerarPdfAsync(int id);
     Task ConferirAsync(int id, int equipamentoId, ConferenciaViewModel conferencia, int usuario);
     Task EncerrarAsync(int id);
     Task<object> ObterDashboardAsync();

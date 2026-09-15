@@ -6,6 +6,13 @@ namespace JcaInventario.Repositories;
 
 public class RepositorioInventario : IRepositorioInventario
 {
+    public Task<IEnumerable<JcaInventario.Models.ItemRelatorioInventario>> ListarRelatorioAsync(MySqlConnection conexao, int id, MySqlTransaction transacao)
+        => conexao.QueryAsync<JcaInventario.Models.ItemRelatorioInventario>("""
+            SELECT c.EquipamentoId,c.Situacao,c.Observacao,c.Data,u.Nome Usuario,e.*
+            FROM conferencias c JOIN inventario_equipamentos e ON e.ConferenciaId=c.Id
+            LEFT JOIN usuarios u ON u.Id=c.UsuarioId
+            WHERE c.InventarioId=@id ORDER BY e.Setor,e.NumeroPatrimonio,c.EquipamentoId
+            """, new { id }, transacao);
     public const string ConsultaEquipamentos = """
         SELECT e.*, t.Nome Tipo, f.Nome Responsavel, f.SetorId, s.Nome Setor
         FROM equipamentos e JOIN tipos_equipamento t ON t.Id=e.TipoId
@@ -37,13 +44,29 @@ public class RepositorioInventario : IRepositorioInventario
         => conexao.ExecuteScalarAsync<int>("INSERT INTO inventarios (Nome,UsuarioId) VALUES (@Nome,@usuario); SELECT LAST_INSERT_ID()", parametros, transacao);
 
     public Task<int> InserirConferenciasAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.ExecuteAsync("INSERT INTO conferencias (InventarioId,EquipamentoId) SELECT @id,Id FROM equipamentos WHERE Status NOT IN ('Baixado','Inativo')", parametros, transacao);
+        => conexao.ExecuteAsync("""
+            INSERT INTO conferencias (InventarioId,EquipamentoId)
+            SELECT @id,Id FROM equipamentos WHERE Status NOT IN ('Baixado','Inativo');
+            INSERT INTO inventario_equipamentos
+              (ConferenciaId,NumeroPatrimonio,NumeroSerie,Tipo,Marca,Modelo,Responsavel,Setor,Localizacao,Status,CapturadoNaCriacao)
+            SELECT c.Id,e.NumeroPatrimonio,e.NumeroSerie,t.Nome,e.Marca,e.Modelo,f.Nome,s.Nome,e.Localizacao,e.Status,1
+            FROM conferencias c JOIN equipamentos e ON e.Id=c.EquipamentoId
+            JOIN tipos_equipamento t ON t.Id=e.TipoId
+            LEFT JOIN funcionarios f ON f.Id=e.ResponsavelId LEFT JOIN setores s ON s.Id=f.SetorId
+            WHERE c.InventarioId=@id;
+            """, parametros, transacao);
 
     public Task<dynamic> ObterInventarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
         => conexao.QuerySingleOrDefaultAsync("SELECT * FROM inventarios WHERE Id=@id", parametros, transacao);
 
     public Task<IEnumerable<dynamic>> ListarConferenciasAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.QueryAsync("SELECT c.*,e.NumeroPatrimonio,e.Modelo,e.NumeroSerie,e.Localizacao,f.Nome Responsavel,u.Nome Usuario FROM conferencias c JOIN equipamentos e ON e.Id=c.EquipamentoId LEFT JOIN funcionarios f ON f.Id=e.ResponsavelId LEFT JOIN usuarios u ON u.Id=c.UsuarioId WHERE InventarioId=@id ORDER BY e.NumeroPatrimonio,e.Id", parametros, transacao);
+        => conexao.QueryAsync("""
+            SELECT c.*,e.NumeroPatrimonio,e.Marca,e.Modelo,e.NumeroSerie,e.Tipo,e.Localizacao,e.Status,
+              e.Responsavel,e.Setor,e.CapturadoEm,e.CapturadoNaCriacao,u.Nome Usuario
+            FROM conferencias c JOIN inventario_equipamentos e ON e.ConferenciaId=c.Id
+            LEFT JOIN usuarios u ON u.Id=c.UsuarioId
+            WHERE c.InventarioId=@id ORDER BY e.Setor,e.NumeroPatrimonio,c.EquipamentoId
+            """, parametros, transacao);
 
     public Task<dynamic> ObterInventarioParaAtualizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
         => conexao.QuerySingleOrDefaultAsync("SELECT * FROM inventarios WHERE Id=@id FOR UPDATE", parametros, transacao);

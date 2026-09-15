@@ -52,3 +52,23 @@ CREATE TABLE IF NOT EXISTS historico (
  UsuarioId INT NOT NULL, Descricao VARCHAR(250) NOT NULL, DadosAnteriores JSON NULL, DadosNovos JSON NULL,
  FOREIGN KEY (EquipamentoId) REFERENCES equipamentos(Id), FOREIGN KEY (UsuarioId) REFERENCES usuarios(Id), INDEX ix_historico_data (EquipamentoId,Data)
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inventario_equipamentos (
+ ConferenciaId INT PRIMARY KEY,
+ NumeroPatrimonio VARCHAR(100), NumeroSerie VARCHAR(150), Tipo VARCHAR(160),
+ Marca VARCHAR(100), Modelo VARCHAR(160), Responsavel VARCHAR(160), Setor VARCHAR(160),
+ Localizacao VARCHAR(40), Status VARCHAR(40),
+ CapturadoEm DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ CapturadoNaCriacao BOOLEAN NOT NULL,
+ FOREIGN KEY (ConferenciaId) REFERENCES conferencias(Id)
+) ENGINE=InnoDB;
+
+-- Migra somente registros antigos sem copia; nunca sobrescreve o historico salvo.
+INSERT INTO inventario_equipamentos
+ (ConferenciaId,NumeroPatrimonio,NumeroSerie,Tipo,Marca,Modelo,Responsavel,Setor,Localizacao,Status,CapturadoNaCriacao)
+ SELECT c.Id,e.NumeroPatrimonio,e.NumeroSerie,t.Nome,e.Marca,e.Modelo,f.Nome,s.Nome,e.Localizacao,e.Status,0
+ FROM conferencias c JOIN equipamentos e ON e.Id=c.EquipamentoId
+ JOIN tipos_equipamento t ON t.Id=e.TipoId
+ LEFT JOIN funcionarios f ON f.Id=e.ResponsavelId LEFT JOIN setores s ON s.Id=f.SetorId
+ LEFT JOIN inventario_equipamentos copia ON copia.ConferenciaId=c.Id
+ WHERE copia.ConferenciaId IS NULL;

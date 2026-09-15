@@ -8,6 +8,18 @@ namespace JcaInventario.Servicos;
 
 public class ServicoInventario(Banco banco, IRepositorioInventario repositorio, ServicoEquipamentos servicoEquipamentos) : IServicoInventario
 {
+    public async Task<byte[]> GerarPdfAsync(int id)
+    {
+        await using var conexao = await banco.AbrirAsync();
+        await using var transacao = await conexao.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead);
+        var inventario = await repositorio.ObterInventarioAsync(conexao, new { id }, transacao)
+            ?? throw new KeyNotFoundException();
+        var itens = (await repositorio.ListarRelatorioAsync(conexao, id, transacao)).ToList();
+        var relatorio = new RelatorioInventario(id, (string)inventario.Nome, (DateTime)inventario.Data,
+            Convert.ToBoolean((object)inventario.Encerrado), itens);
+        await transacao.CommitAsync();
+        return GeradorInventario.Gerar(relatorio);
+    }
     public async Task<object> ListarMovimentacoesAsync() { await using var conexao = await banco.AbrirAsync(); return await repositorio.ListarMovimentacoesAsync(conexao); }
     public async Task<object> ListarManutencoesAsync() { await using var conexao = await banco.AbrirAsync(); return await repositorio.ListarManutencoesAsync(conexao); }
     public async Task<object> ListarInventariosAsync()

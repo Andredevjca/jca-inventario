@@ -4,6 +4,7 @@ namespace JcaInventario.Interfaces.Repositories;
 
 public interface IRepositorioInventario
 {
+    Task<IEnumerable<JcaInventario.Models.ItemRelatorioInventario>> ListarRelatorioAsync(MySqlConnection conexao, int id, MySqlTransaction transacao);
     Task<IEnumerable<dynamic>> ListarMovimentacoesAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
     Task<IEnumerable<dynamic>> ListarManutencoesAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
     Task<IEnumerable<dynamic>> ListarInventariosAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);

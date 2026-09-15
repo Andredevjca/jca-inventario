@@ -26,6 +26,18 @@ public class InventariosController : PainelController
         return View(new NovoInventarioViewModel { Nome = $"Inventário {DateTime.Now:MMMM yyyy}" });
     }
 
+    public async Task<IActionResult> Pdf(int id)
+    {
+        try
+        {
+            return File(await _servico.GerarPdfAsync(id), "application/pdf", $"inventario-{id}-por-setor.pdf");
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Criar(NovoInventarioViewModel modelo)
