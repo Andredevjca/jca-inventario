@@ -55,7 +55,7 @@
             <div class="d-grid gap-2">
                 @if (equipamento.ResponsavelId != null)
                 {
-                    <a class="btn btn-outline-secondary" asp-action="Termo" asp-route-id="@equipamento.Id"><i class="fa-solid fa-file-pdf"></i> Termo de responsabilidade</a>
+                    <a class="btn btn-outline-secondary" asp-action="Termo" asp-route-id="@equipamento.Id" data-no-spa><i class="fa-solid fa-file-pdf"></i> Termo de responsabilidade</a>
                 }
                 <a class="btn btn-outline-secondary" asp-controller="Manutencoes" asp-action="Criar"><i class="fa-solid fa-screwdriver-wrench"></i> Registrar manutenção</a>
             </div>

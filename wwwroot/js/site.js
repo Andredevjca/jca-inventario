@@ -1,5 +1,6 @@
 (() => {
   const corpo = document.body;
+  const inicializarPagina = () => {
   document.querySelectorAll("[data-vinculo-equipamento]").forEach((formulario) => {
     const responsavel = formulario.querySelector('[name="ResponsavelId"]');
     const status = formulario.querySelector('[name="Status"]');
@@ -11,6 +12,9 @@
       if (localizacao.value === "Estoque") localizacao.value = "Escritório";
     });
   });
+  };
+  inicializarPagina();
+  document.addEventListener("app:navigated", inicializarPagina);
   const botaoSidebar = document.getElementById("botaoSidebar");
   const backdrop = document.getElementById("sidebarBackdrop");
   const telaPequena = () => window.matchMedia("(max-width: 991.98px)").matches;
