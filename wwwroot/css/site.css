@@ -368,13 +368,13 @@ body.sidebar-collapsed .app-content {
 .status-info { background: #e8f1fb; color: #1d5aa6; }
 
 .table-modern thead th {
-  background: #f7f9fc;
-  color: #5b6b7c;
-  font-weight: 600;
-  font-size: var(--app-font-size);
-  text-transform: uppercase;
-  letter-spacing: .03em;
-  border-bottom: 1px solid #e6ebf1;
+    background: #f7f9fc;
+    color: #5b6b7c;
+    font-weight: 600;
+    font-size: var(--app-font-size);
+    /*text-transform: uppercase;*/
+    letter-spacing: .03em;
+    border-bottom: 1px solid #e6ebf1;
 }
 
 .table-modern td { vertical-align: middle; }
