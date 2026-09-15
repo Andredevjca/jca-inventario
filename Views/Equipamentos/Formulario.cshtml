@@ -5,9 +5,9 @@
         <p class="text-muted mb-0">Identificação, situação e configuração</p>
     </div>
 </div>
-<form method="post" enctype="multipart/form-data" class="content-card p-4">
+<form method="post" enctype="multipart/form-data" class="content-card p-4" data-vinculo-equipamento>
     @Html.AntiForgeryToken()
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
     <div class="row g-3">
         <div class="col-md-4">
             <label asp-for="TipoId" class="form-label"></label>

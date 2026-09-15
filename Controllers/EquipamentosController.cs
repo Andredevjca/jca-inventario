@@ -64,10 +64,10 @@ public class EquipamentosController : PainelController
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(6 * 1024 * 1024)]
-    public async Task<IActionResult> Criar(Equipamento modelo, IFormFile? arquivo)
+    public async Task<IActionResult> Criar(Equipamento equipamento, IFormFile? arquivo)
     {
         ViewData["Title"] = "Novo equipamento";
-        return await Salvar(modelo, arquivo, false);
+        return await Salvar(equipamento, arquivo, false);
     }
 
     public async Task<IActionResult> Editar(int id)
@@ -88,11 +88,11 @@ public class EquipamentosController : PainelController
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(6 * 1024 * 1024)]
-    public async Task<IActionResult> Editar(int id, Equipamento modelo, IFormFile? arquivo, bool removerFoto = false)
+    public async Task<IActionResult> Editar(int id, Equipamento equipamento, IFormFile? arquivo, bool removerFoto = false)
     {
         ViewData["Title"] = "Editar equipamento";
-        modelo.Id = id;
-        return await Salvar(modelo, arquivo, removerFoto);
+        equipamento.Id = id;
+        return await Salvar(equipamento, arquivo, removerFoto);
     }
 
     public async Task<IActionResult> Movimentar(int id)
@@ -106,7 +106,7 @@ public class EquipamentosController : PainelController
             ViewBag.Movimentacoes = OpcoesInventario.Movimentacoes;
             ViewBag.Status = OpcoesInventario.Status.Where(item => item != "Em manutenção");
             ViewBag.Localizacoes = OpcoesInventario.Localizacoes.Where(item => item != "Manutenção");
-            return View(new Movimentacao
+            return View(new MovimentacaoViewModel
             {
                 ResponsavelId = dados.equipamento.ResponsavelId,
                 Status = dados.equipamento.Status,
