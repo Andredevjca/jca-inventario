@@ -1,4 +1,4 @@
-﻿# JCA Soluções — Inventário de equipamentos
+# JCA Soluções — Inventário de equipamentos
 
 Sistema independente em ASP.NET Core 10, C#, Dapper e MySQL. Frontend em HTML, CSS, JavaScript e Bootstrap, com Font Awesome e Nunito. O CSS de layout e de login e os arquivos do Bootstrap foram reaproveitados de `C:\controle-alugueis`; o projeto de referência não foi alterado.
 
@@ -96,30 +96,17 @@ Configuracoes/    Opções permitidas no inventário
 Infraestrutura/   Conexão e inicialização do MySQL
 Views/            Página Razor e layout compartilhado
 wwwroot/          CSS, JavaScript e Bootstrap
-Testes/           Verificações de integração e inicialização
 Dados/            Arquivos locais, fotos, chaves e MySQL de desenvolvimento
 ```
 
 ## Validação
 
+As pastas `Dados/` e `publicacao/` são locais e ignoradas pelo Git, assim como os artefatos de compilação e as configurações locais. Cada desenvolvedor deve configurar seu próprio MySQL conforme as instruções acima.
+
 ```powershell
 dotnet build
 Get-Content .\wwwroot\js\aplicacao.js -Raw | node --check
 ```
-
-Use **um banco exclusivo de testes** para os comandos abaixo. O teste HTTP cria registros e encerra inventários de teste. Não aponte para produção.
-
-```powershell
-$env:ConnectionStrings__Banco = 'Server=127.0.0.1;Port=3308;Database=jca_inventario_teste;User ID=root;Password=;SslMode=None'
-dotnet run
-# Em outro terminal, com a aplicação acima em execução:
-.\Testes\integracao.ps1
-
-$env:JCA_CONEXAO_TESTE = 'Server=127.0.0.1;Port=3308;Database=jca_inicializacao_teste;User ID=root;Password=;SslMode=None'
-dotnet run --project .\Testes\Verificacoes.csproj
-```
-
-Foram executadas **32 verificações HTTP** e **9 verificações de inicialização, hash e PDF**, com MySQL 8.4 isolado. A compilação e a sintaxe JavaScript foram verificadas. A inspeção visual no navegador não pôde ser executada: as ferramentas de navegador e controle nativo não estavam disponíveis na sessão. O PDF foi verificado estruturalmente, sem renderização visual. A consulta de vulnerabilidades do NuGet não ficou disponível devido à restrição de rede do ambiente.
 
 ## Publicação e dados
 

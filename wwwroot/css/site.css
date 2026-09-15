@@ -9,11 +9,11 @@
   --sidebar-width: 260px;
   --sidebar-bg: #152033;
   --sidebar-bg-hover: #1e2d45;
-  --sidebar-active: #2d6a4f;
-  --bs-link-color: #2d6a4f;
-  --bs-link-color-rgb: 45, 106, 79;
-  --bs-link-hover-color: #245c43;
-  --bs-link-hover-color-rgb: 36, 92, 67;
+  --sidebar-active: #294b8f;
+  --bs-link-color: #294b8f;
+  --bs-link-color-rgb: 41, 75, 143;
+  --bs-link-hover-color: #203b70;
+  --bs-link-hover-color-rgb: 32, 59, 112;
   --header-height: 64px;
   --page-bg: #f3f5f8;
   --card-shadow: 0 8px 24px rgba(21, 32, 51, 0.08);
@@ -41,8 +41,8 @@ body {
   --bs-dropdown-font-size: var(--app-font-size);
   --bs-dropdown-link-active-bg: var(--sidebar-active);
   --bs-dropdown-link-active-color: #fff;
-  --bs-dropdown-link-hover-bg: #e8f6ef;
-  --bs-dropdown-link-hover-color: #245c43;
+  --bs-dropdown-link-hover-bg: #edf2fb;
+  --bs-dropdown-link-hover-color: #203b70;
 }
 
 .pagination {
@@ -111,7 +111,7 @@ body.app-body {
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #2d6a4f, #40916c);
+  background: linear-gradient(135deg, #294b8f, #4268b0);
   display: grid;
   place-items: center;
   color: #fff;
@@ -228,8 +228,8 @@ body.sidebar-collapsed .app-content {
 .form-select:focus,
 .form-control:focus-visible,
 .form-select:focus-visible {
-  border-color: #40916c !important;
-  box-shadow: 0 0 0 .2rem rgba(45, 106, 79, .18) !important;
+  border-color: #4268b0 !important;
+  box-shadow: 0 0 0 .2rem rgba(41, 75, 143, .18) !important;
   outline: 0;
 }
 
@@ -238,13 +238,13 @@ body.sidebar-collapsed .app-content {
 }
 
 .form-check-input:focus {
-  border-color: #40916c;
-  box-shadow: 0 0 0 .2rem rgba(45, 106, 79, .18);
+  border-color: #4268b0;
+  box-shadow: 0 0 0 .2rem rgba(41, 75, 143, .18);
 }
 
 .form-check-input:checked {
-  background-color: #2d6a4f;
-  border-color: #2d6a4f;
+  background-color: #294b8f;
+  border-color: #294b8f;
 }
 
 .input-group-text {
@@ -258,7 +258,7 @@ body.sidebar-collapsed .app-content {
 .btn:focus-visible,
 .btn-outline-secondary:focus,
 .btn-light:focus {
-  box-shadow: 0 0 0 .2rem rgba(45, 106, 79, .18) !important;
+  box-shadow: 0 0 0 .2rem rgba(41, 75, 143, .18) !important;
 }
 
 .form-control::placeholder {
@@ -313,7 +313,7 @@ body.sidebar-collapsed .app-content {
   font-size: var(--app-icon-size);
 }
 
-.bg-soft-green { background: #e8f6ef; color: #1b7a4a; }
+.bg-soft-green { background: #edf2fb; color: #294b8f; }
 .bg-soft-blue { background: #e8f1fb; color: #1d5aa6; }
 .bg-soft-yellow { background: #fff6df; color: #a07500; }
 .bg-soft-red { background: #fdecee; color: #b42318; }
@@ -331,7 +331,7 @@ body.sidebar-collapsed .app-content {
   font-weight: 600;
 }
 
-.status-pago { background: #e8f6ef; color: #1b7a4a; }
+.status-pago { background: #edf2fb; color: #294b8f; }
 .status-pendente { background: #fff6df; color: #a07500; }
 .status-atrasado { background: #fdecee; color: #b42318; }
 .status-cancelado { background: #eef1f4; color: #526173; }
@@ -351,6 +351,25 @@ body.sidebar-collapsed .app-content {
 
 .btn-modern {
   font-weight: 600;
+}
+
+.btn-success {
+  --bs-btn-bg: #294b8f;
+  --bs-btn-border-color: #294b8f;
+  --bs-btn-hover-bg: #203b70;
+  --bs-btn-hover-border-color: #203b70;
+  --bs-btn-focus-shadow-rgb: 41, 75, 143;
+  --bs-btn-active-bg: #1a305c;
+  --bs-btn-active-border-color: #1a305c;
+  --bs-btn-disabled-bg: #294b8f;
+  --bs-btn-disabled-border-color: #294b8f;
+}
+
+.alert-success {
+  --bs-alert-color: #203b70;
+  --bs-alert-bg: #edf2fb;
+  --bs-alert-border-color: #c9d6ed;
+  --bs-alert-link-color: #1a305c;
 }
 
 .timeline { position: relative; padding-left: 1.5rem; }
@@ -373,9 +392,9 @@ body.sidebar-collapsed .app-content {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #2d6a4f;
+  background: #294b8f;
   border: 2px solid #fff;
-  box-shadow: 0 0 0 2px #2d6a4f;
+  box-shadow: 0 0 0 2px #294b8f;
 }
 
 .timeline-item.encerrado::before { background: #8ea0b5; box-shadow: 0 0 0 2px #8ea0b5; }
@@ -448,8 +467,8 @@ body.sidebar-open .sidebar-backdrop { display: block; }
 }
 
 .casa-tabs .nav-link:hover {
-  color: #245c43;
-  background: #f0f6f3;
+  color: #203b70;
+  background: #f0f3fa;
 }
 
 .casa-tabs .nav-link.active {
@@ -458,7 +477,7 @@ body.sidebar-open .sidebar-backdrop { display: block; }
 }
 
 .casa-tabs .nav-link:focus-visible {
-  outline: 2px solid #40916c;
+  outline: 2px solid #4268b0;
   outline-offset: -2px;
 }
 
