@@ -4,14 +4,15 @@
     var equipamentos = Formatador.Lista(Model.equipamentos);
     var historico = Formatador.Lista(Model.historico);
 }
-<div class="page-header">
-    <div>
-        <h1>@funcionario.Nome</h1>
-        <p class="text-muted mb-0">@Formatador.Texto(funcionario.Cargo) · @funcionario.Setor</p>
-    </div>
-    <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
-</div>
+
 <section class="content-card p-3 mb-3">
+    <div class="page-header">
+        <div>
+            <h1>@funcionario.Nome</h1>
+            <p class="text-muted mb-0">@Formatador.Texto(funcionario.Cargo) · @funcionario.Setor</p>
+        </div>
+        <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
+    </div>
     <dl class="row detalhe-campo mb-0">
         <div class="col-md-6"><dt>E-mail</dt><dd>@Formatador.Texto(funcionario.Email)</dd></div>
         <div class="col-md-6"><dt>Telefone</dt><dd>@Formatador.Texto(funcionario.Telefone)</dd></div>
@@ -26,7 +27,8 @@
         <div class="col-md-6"><dt>Complemento</dt><dd>@Formatador.Texto(funcionario.Complemento)</dd></div>
         <div class="col-md-6"><dt>Nascimento</dt><dd>@(funcionario.DataNascimento == null ? "—" : ((DateTime)funcionario.DataNascimento).ToString("dd/MM/yyyy"))</dd></div>
         <div class="col-md-6"><dt>Admissão</dt><dd>@(funcionario.DataAdmissao == null ? "—" : ((DateTime)funcionario.DataAdmissao).ToString("dd/MM/yyyy"))</dd></div>
-        <div class="col-md-6"><dt>Tempo de empresa</dt>
+        <div class="col-md-6">
+            <dt>Tempo de empresa</dt>
             <dd class="text-wrap">
                 @if (funcionario.DataAdmissao == null)
                 {
@@ -47,14 +49,14 @@
         <table class="table table-modern">
             <thead><tr><th>Patrimônio</th><th>Modelo</th><th>Status</th></tr></thead>
             <tbody>
-            @foreach (var item in equipamentos)
-            {
-                <tr>
-                    <td><a asp-controller="Equipamentos" asp-action="Detalhes" asp-route-id="@item.Id">@Formatador.Texto(item.NumeroPatrimonio)</a></td>
-                    <td>@item.Modelo</td>
-                    <td>@item.Status</td>
-                </tr>
-            }
+                @foreach (var item in equipamentos)
+                {
+                    <tr>
+                        <td><a asp-controller="Equipamentos" asp-action="Detalhes" asp-route-id="@item.Id">@Formatador.Texto(item.NumeroPatrimonio)</a></td>
+                        <td>@item.Modelo</td>
+                        <td>@item.Status</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

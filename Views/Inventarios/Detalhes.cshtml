@@ -4,25 +4,26 @@
     var itens = Formatador.Lista((object?)Model.itens).ToList();
     var encerrado = Convert.ToBoolean(inventario.Encerrado);
 }
-<div class="page-header">
-    <div>
-        <h1>@inventario.Nome</h1>
-        <p class="text-muted mb-0">Total: @itens.Count</p>
-    </div>
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
-        <a class="btn btn-outline-secondary" asp-action="Pdf" asp-route-id="@inventario.Id" data-no-spa><i class="fa-solid fa-file-pdf"></i> Exportar PDF por setor</a>
-        @if (!encerrado)
-        {
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalExclusao" data-url="@Url.Action("Encerrar", new { id = inventario.Id })" data-mensagem="Encerrar este inventário? As conferências ficarão apenas para consulta.">Encerrar inventário</button>
-        }
-    </div>
-</div>
+
 @if (itens.Any(item => !Convert.ToBoolean((object)item.CapturadoNaCriacao)))
 {
     <div class="alert alert-warning">Inventário legado: os dados dos equipamentos foram preservados na atualização do sistema. Eles podem diferir dos dados da criação original. A data da captura consta no PDF.</div>
 }
 <div class="content-card p-3">
+    <div class="page-header">
+        <div>
+            <h1>@inventario.Nome</h1>
+            <p class="text-muted mb-0">Total: @itens.Count</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
+            <a class="btn btn-outline-secondary" asp-action="Pdf" asp-route-id="@inventario.Id" data-no-spa><i class="fa-solid fa-file-pdf"></i> Exportar PDF por setor</a>
+            @if (!encerrado)
+            {
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalExclusao" data-url="@Url.Action("Encerrar", new { id = inventario.Id })" data-mensagem="Encerrar este inventário? As conferências ficarão apenas para consulta.">Encerrar inventário</button>
+            }
+        </div>
+    </div>
     <div class="table-responsive">
         <table class="table table-modern">
             <thead>

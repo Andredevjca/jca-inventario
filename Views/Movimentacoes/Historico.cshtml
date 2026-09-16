@@ -5,17 +5,18 @@
         .OrderByDescending(item => (DateTime?)item.Data)
         .ThenByDescending(item => (int)item.Id).ToList();
 }
-<div class="page-header">
-    <div>
-        <h1>Histórico de movimentações</h1>
-        <p class="text-muted mb-0">@equipamento.Marca @equipamento.Modelo · Patrimônio @Formatador.Texto(equipamento.NumeroPatrimonio)</p>
-    </div>
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
-        <a class="btn btn-outline-secondary" asp-controller="Equipamentos" asp-action="Detalhes" asp-route-id="@equipamento.Id">Detalhes do equipamento</a>
-    </div>
-</div>
+
 <section class="content-card p-3 mb-3">
+    <div class="page-header">
+        <div>
+            <h1>Histórico de movimentações</h1>
+            <p class="text-muted mb-0">@equipamento.Marca @equipamento.Modelo · Patrimônio @Formatador.Texto(equipamento.NumeroPatrimonio)</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
+            <a class="btn btn-outline-secondary" asp-controller="Equipamentos" asp-action="Detalhes" asp-route-id="@equipamento.Id">Detalhes do equipamento</a>
+        </div>
+    </div>
     <h2 class="fw-bold mb-3">Equipamento</h2>
     <dl class="row detalhe-campo mb-0">
         <div class="col-md-4"><dt>Tipo</dt><dd>@equipamento.Tipo</dd></div>

@@ -34,20 +34,15 @@
         tempoEquipamento = "Data de aquisição no futuro";
     }
 }
-<div class="page-header">
-    <div>
-        <h1>@equipamento.Marca @equipamento.Modelo</h1>
-        <p class="text-muted mb-0">@Formatador.Texto(equipamento.NumeroPatrimonio) · @equipamento.Tipo</p>
-    </div>
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
-        <a class="btn btn-outline-secondary" asp-action="Editar" asp-route-id="@equipamento.Id">Editar</a>
-        <a class="btn btn-success" asp-action="Movimentar" asp-route-id="@equipamento.Id">Movimentar</a>
-    </div>
-</div>
 <div class="row g-3">
     <div class="col-lg-8">
         <section class="content-card p-3 mb-3">
+            <div class="page-header">
+                <div>
+                    <h1>@equipamento.Marca @equipamento.Modelo</h1>
+                    <p class="text-muted mb-0">@Formatador.Texto(equipamento.NumeroPatrimonio) · @equipamento.Tipo</p>
+                </div>
+            </div>
             <h2 class="fw-bold mb-3">Identificação</h2>
             <dl class="row detalhe-campo mb-0">
                 <div class="col-md-6"><dt>Tipo</dt><dd>@equipamento.Tipo</dd></div>
@@ -73,6 +68,11 @@
     </div>
     <div class="col-lg-4">
         <section class="content-card p-3 mb-3">
+            <div class="d-flex gap-2 justify-content-end mb-3">
+                <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
+                <a class="btn btn-outline-secondary" asp-action="Editar" asp-route-id="@equipamento.Id">Editar</a>
+                <a class="btn btn-success" asp-action="Movimentar" asp-route-id="@equipamento.Id">Movimentar</a>
+            </div>
             <h2 class="fw-bold mb-3">Foto</h2>
             @if (equipamento.Foto != null)
             {

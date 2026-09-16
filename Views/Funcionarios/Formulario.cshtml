@@ -1,12 +1,17 @@
 @model Funcionario
-<div class="page-header"><div><h1>@(Model.Id == 0 ? "Novo funcionário" : "Editar funcionário")</h1></div></div>
+
 <form method="post" class="content-card p-4">
     @Html.AntiForgeryToken()
-    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    <div class="page-header">
+        <div>
+            <h1>@(Model.Id == 0 ? "Novo funcionário" : "Editar funcionário")</h1>
+        </div>
+    </div>
     <div class="row g-3">
         <div class="col-md-6">
             <label asp-for="Nome" class="form-label"></label>
             <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
         </div>
         <div class="col-md-6">
             <label asp-for="Email" class="form-label"></label>
@@ -88,8 +93,12 @@
         </div>
         <div class="col-md-2">
             <label asp-for="Uf" class="form-label"></label>
-            <select asp-for="Uf" class="form-select"><option value="">Selecione</option>
-                @foreach (var uf in "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".Split(' ')) { <option>@uf</option> }
+            <select asp-for="Uf" class="form-select">
+                <option value="">Selecione</option>
+                @foreach (var uf in "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".Split(' '))
+                {
+                    <option>@uf</option>
+                }
             </select>
         </div>
         <div class="col-12">

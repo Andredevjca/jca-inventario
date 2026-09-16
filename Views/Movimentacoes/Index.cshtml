@@ -1,11 +1,12 @@
 @model IEnumerable<dynamic>
-<div class="page-header">
-    <div>
-        <h1>Movimentações</h1>
-        <p class="text-muted mb-0">Última movimentação de cada equipamento. Acesse o ícone de histórico para ver todas as movimentações.</p>
-    </div>
-    <a class="btn btn-success btn-modern" asp-controller="Equipamentos" asp-action="Index">Selecionar equipamento</a>
-</div>
+
 <div class="content-card p-3">
+    <div class="page-header">
+        <div>
+            <h1>Movimentações</h1>
+            <p class="text-muted mb-0">Última movimentação de cada equipamento. Acesse o ícone de histórico para ver todas as movimentações.</p>
+        </div>
+        <a class="btn btn-success btn-modern" asp-controller="Equipamentos" asp-action="Index">Selecionar equipamento</a>
+    </div>
     <partial name="Componentes/_TabelaMovimentacoes" model="Model" />
 </div>

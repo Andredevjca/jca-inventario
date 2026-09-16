@@ -1,11 +1,12 @@
 @model IEnumerable<dynamic>
-<div class="page-header">
-    <div>
-        <h1>Relatórios</h1>
-        <p class="text-muted mb-0">Filtre o patrimônio e acompanhe os totais.</p>
-    </div>
-</div>
+
 <form class="content-card p-3 mb-3" method="get">
+    <div class="page-header">
+        <div>
+            <h1>Relatórios</h1>
+            <p class="text-muted mb-0">Filtre o patrimônio e acompanhe os totais.</p>
+        </div>
+    </div>
     <div class="row g-2 align-items-end">
         <div class="col-md-4">
             <label class="form-label">Status</label>
@@ -46,18 +47,18 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Formatador.Texto(item.NumeroPatrimonio)</td>
-                    <td>@item.Tipo</td>
-                    <td>@item.Modelo</td>
-                    <td>@Formatador.Texto(item.Responsavel)</td>
-                    <td>@Formatador.Texto(item.Setor)</td>
-                    <td>@item.Status</td>
-                    <td>@Formatador.Moeda(Convert.ToDecimal(item.ValorAquisicao ?? 0))</td>
-                </tr>
-            }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Formatador.Texto(item.NumeroPatrimonio)</td>
+                        <td>@item.Tipo</td>
+                        <td>@item.Modelo</td>
+                        <td>@Formatador.Texto(item.Responsavel)</td>
+                        <td>@Formatador.Texto(item.Setor)</td>
+                        <td>@item.Status</td>
+                        <td>@Formatador.Moeda(Convert.ToDecimal(item.ValorAquisicao ?? 0))</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

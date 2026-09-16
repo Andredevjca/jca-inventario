@@ -1,7 +1,12 @@
 @model JcaInventario.ViewModels.NovoInventarioViewModel
-<div class="page-header"><div><h1>Novo inventário</h1></div></div>
+
 <form method="post" class="content-card p-4">
     @Html.AntiForgeryToken()
+    <div class="page-header">
+        <div>
+            <h1>Novo inventário</h1>
+        </div>
+    </div>
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="mb-3">
         <label asp-for="Nome" class="form-label"></label>

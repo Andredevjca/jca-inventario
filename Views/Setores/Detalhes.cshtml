@@ -4,27 +4,34 @@
     var funcionarios = Formatador.Lista(Model.funcionarios);
     var equipamentos = Formatador.Lista(Model.equipamentos);
 }
-<div class="page-header">
-    <div>
-        <h1>@setor.Nome</h1>
-        <p class="text-muted mb-0">Funcionários e equipamentos vinculados ao setor.</p>
-    </div>
-    <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
-</div>
+
 <section class="content-card p-3 mb-3">
+    <div class="page-header">
+        <div>
+            <h1>@setor.Nome</h1>
+            <p class="text-muted mb-0">Funcionários e equipamentos vinculados ao setor.</p>
+        </div>
+        <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
+    </div>
     <h2 class="fw-bold mb-3">Funcionários</h2>
     <div class="table-responsive">
         <table class="table table-modern">
-            <thead><tr><th>Nome</th><th>Cargo</th><th>E-mail</th></tr></thead>
-            <tbody>
-            @foreach (var item in funcionarios)
-            {
+            <thead>
                 <tr>
-                    <td><a asp-controller="Funcionarios" asp-action="Detalhes" asp-route-id="@item.Id">@item.Nome</a></td>
-                    <td>@Formatador.Texto(item.Cargo)</td>
-                    <td>@Formatador.Texto(item.Email)</td>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>E-mail</th>
                 </tr>
-            }
+            </thead>
+            <tbody>
+                @foreach (var item in funcionarios)
+                {
+                    <tr>
+                        <td><a asp-controller="Funcionarios" asp-action="Detalhes" asp-route-id="@item.Id">@item.Nome</a></td>
+                        <td>@Formatador.Texto(item.Cargo)</td>
+                        <td>@Formatador.Texto(item.Email)</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -35,14 +42,14 @@
         <table class="table table-modern">
             <thead><tr><th>Patrimônio</th><th>Modelo</th><th>Status</th></tr></thead>
             <tbody>
-            @foreach (var item in equipamentos)
-            {
-                <tr>
-                    <td><a asp-controller="Equipamentos" asp-action="Detalhes" asp-route-id="@item.Id">@Formatador.Texto(item.NumeroPatrimonio)</a></td>
-                    <td>@item.Modelo</td>
-                    <td>@item.Status</td>
-                </tr>
-            }
+                @foreach (var item in equipamentos)
+                {
+                    <tr>
+                        <td><a asp-controller="Equipamentos" asp-action="Detalhes" asp-route-id="@item.Id">@Formatador.Texto(item.NumeroPatrimonio)</a></td>
+                        <td>@item.Modelo</td>
+                        <td>@item.Status</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

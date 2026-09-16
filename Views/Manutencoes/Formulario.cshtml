@@ -1,11 +1,12 @@
 @model Manutencao
-<div class="page-header">
-    <div>
-        <h1>@(Model.Id == 0 ? "Nova manutenção" : "Atualizar manutenção")</h1>
-    </div>
-</div>
+
 <form method="post" class="content-card p-4">
     @Html.AntiForgeryToken()
+    <div class="page-header">
+        <div>
+            <h1>@(Model.Id == 0 ? "Nova manutenção" : "Atualizar manutenção")</h1>
+        </div>
+    </div>
     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
     <div class="row g-3">
         <div class="col-md-6">

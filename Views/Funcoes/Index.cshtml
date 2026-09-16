@@ -1,22 +1,32 @@
 @model IEnumerable<dynamic>
-<div class="page-header">
-    <div><h1>Funções</h1><p class="text-muted mb-0">Cadastro, consulta e atualização dos registros.</p></div>
-    <a class="btn btn-success btn-modern" asp-action="Criar"><i class="fa-solid fa-plus"></i> Novo registro</a>
-</div>
+
 <div class="content-card p-3">
+    <div class="page-header">
+        <div>
+            <h1>Funções</h1>
+            <p class="text-muted mb-0">Cadastro, consulta e atualização dos registros.</p>
+        </div>
+        <a class="btn btn-success btn-modern" asp-action="Criar"><i class="fa-solid fa-plus"></i> Novo registro</a>
+    </div>
     <div class="table-responsive">
         <table class="table table-modern">
-            <thead><tr><th>Nome</th><th>Status</th><th>Ações</th></tr></thead>
-            <tbody>
-            @foreach (var item in Model)
-            {
-                var ativo = Convert.ToBoolean(item.Ativo);
+            <thead>
                 <tr>
-                    <td>@item.Nome</td>
-                    <td><span class="status-badge @Formatador.ClasseStatus(ativo ? "Ativo" : "Inativo")">@(ativo ? "Ativo" : "Inativo")</span></td>
-                    <td><a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"><i class="fa-solid fa-pen"></i></a></td>
+                    <th>Nome</th>
+                    <th>Status</th>
+                    <th>Ações</th>
                 </tr>
-            }
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var ativo = Convert.ToBoolean(item.Ativo);
+                    <tr>
+                        <td>@item.Nome</td>
+                        <td><span class="status-badge @Formatador.ClasseStatus(ativo ? "Ativo" : "Inativo")">@(ativo ? "Ativo" : "Inativo")</span></td>
+                        <td><a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"><i class="fa-solid fa-pen"></i></a></td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
