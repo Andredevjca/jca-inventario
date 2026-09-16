@@ -15,3 +15,4 @@
 .timeline-item pre { font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; background: #f7f9fc; padding: 12px; }
 @media (max-width: 767px) { .filtros-equipamentos { grid-template-columns: 1fr; } .page-header { flex-wrap: wrap; } .app-main { padding: 1rem; } }
 @media print { .sidebar,.app-header,.sem-impressao,.modal,.toast-container { display:none!important } .app-content { margin:0!important } .content-card { box-shadow:none } .app-main { padding:0 } }
+
