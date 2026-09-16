@@ -11,6 +11,7 @@ public interface IRepositorioCadastros
     Task<int> ContarVinculosAtivosAsync(SqlConnection conexao, TipoCadastro tipo, int id, SqlTransaction transacao);
     Task<int> AtualizarCadastroAsync(SqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, SqlTransaction transacao);
     Task<int> InserirCadastroAsync(SqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, SqlTransaction transacao);
+    Task<Cadastro?> ObterFuncaoAsync(SqlConnection conexao, int id, SqlTransaction transacao);
     Task<bool> SetorAtivoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
     Task<Funcionario> ObterFuncionarioParaAtualizacaoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
     Task<int> ContarEquipamentosResponsavelAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);

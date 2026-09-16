@@ -17,6 +17,28 @@
         <div class="col-md-6"><dt>Telefone</dt><dd>@Formatador.Texto(funcionario.Telefone)</dd></div>
         <div class="col-md-6"><dt>Matrícula</dt><dd>@Formatador.Texto(funcionario.Matricula)</dd></div>
         <div class="col-md-6"><dt>Tipo de trabalho</dt><dd>@funcionario.TipoTrabalho</dd></div>
+        <div class="col-md-6"><dt>Endereço</dt><dd>@Formatador.Texto(funcionario.Endereco)</dd></div>
+        <div class="col-md-6"><dt>Número</dt><dd>@Formatador.Texto(funcionario.Numero)</dd></div>
+        <div class="col-md-6"><dt>CEP</dt><dd>@Formatador.Texto(funcionario.Cep)</dd></div>
+        <div class="col-md-6"><dt>Bairro</dt><dd>@Formatador.Texto(funcionario.Bairro)</dd></div>
+        <div class="col-md-6"><dt>Cidade</dt><dd>@Formatador.Texto(funcionario.Cidade)</dd></div>
+        <div class="col-md-6"><dt>UF</dt><dd>@Formatador.Texto(funcionario.Uf)</dd></div>
+        <div class="col-md-6"><dt>Complemento</dt><dd>@Formatador.Texto(funcionario.Complemento)</dd></div>
+        <div class="col-md-6"><dt>Nascimento</dt><dd>@(funcionario.DataNascimento == null ? "—" : ((DateTime)funcionario.DataNascimento).ToString("dd/MM/yyyy"))</dd></div>
+        <div class="col-md-6"><dt>Admissão</dt><dd>@(funcionario.DataAdmissao == null ? "—" : ((DateTime)funcionario.DataAdmissao).ToString("dd/MM/yyyy"))</dd></div>
+        <div class="col-md-6"><dt>Tempo de empresa</dt>
+            <dd class="text-wrap">
+                @if (funcionario.DataAdmissao == null)
+                {
+                    <span class="text-muted">Admissão não informada</span>
+                }
+                else
+                {
+                    var admissao = ((DateTime)funcionario.DataAdmissao).Date;
+                    <span class="status-badge @(admissao > DateTime.Today ? "status-pendente" : "status-ativo")">@Formatador.TempoDeEmpresa(admissao)</span>
+                }
+            </dd>
+        </div>
     </dl>
 </section>
 <section class="content-card p-3 mb-3">

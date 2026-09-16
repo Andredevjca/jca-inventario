@@ -2,5 +2,6 @@
   <PropertyGroup><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><RootNamespace>JcaInventario</RootNamespace><DefaultItemExcludes>$(DefaultItemExcludes);Dados/**;publicacao/**</DefaultItemExcludes></PropertyGroup>
   <ItemGroup><PackageReference Include="Dapper" Version="2.1.79"/><PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.6"/></ItemGroup>
   <ItemGroup><None Update="Database/estrutura.sql" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"/><Content Update="appsettings.Local.json" CopyToPublishDirectory="Never"/></ItemGroup>
+  <ItemGroup><None Update="Database/funcionarios-auditoria.sql" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"/></ItemGroup>
 </Project>
 

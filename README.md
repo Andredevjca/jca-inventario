@@ -110,3 +110,25 @@ Na lista de inventários, use **PDF por setor**, ou abra um inventário e clique
 Os novos inventários preservam os dados dos equipamentos na criação, na tabela `inventario_equipamentos`. Alterações posteriores nos equipamentos, funcionários e setores não modificam esses dados. A conferência continua editável até o encerramento.
 
 Ao reiniciar a aplicação atualizada, o script `Database/estrutura.sql` cria a tabela e captura os dados disponíveis dos inventários antigos que ainda não possuem histórico detalhado. Essa captura não reconstitui a situação original: a tela e o PDF identificam esses registros como legados, e o PDF informa a data da captura. Novas inicializações preservam as cópias existentes.
+
+## Funcionários, funções e auditoria
+
+O cadastro de funcionários inclui `Endereco`, `Numero`, `Cep`, `Bairro`, `Cidade`, `Uf`, `Complemento`, `DataNascimento` e `DataAdmissao`, seguindo o padrão PascalCase do banco. O campo Cargo seleciona uma função do cadastro **Cadastros > Funções**, vinculado por `FuncaoId`. Funções podem ser criadas, renomeadas e inativadas; funções com funcionários ativos não podem ser inativadas. Os cargos legados são migrados para funções, preservando os vínculos. `Cargo` continua sincronizado para compatibilidade com os relatórios existentes.
+
+A consulta no navegador usa [ViaCEP](https://viacep.com.br/), preenche endereço, bairro, cidade, UF e complemento e permite correções manuais. O número é informado pelo usuário. CEP inexistente, falhas e tempo limite são informados sem impedir o preenchimento manual.
+
+Mantenha também `Database/funcionarios-auditoria.sql` na publicação. A inicialização executa esse script depois de `estrutura.sql`, com trava de inicialização, transação e verificações que permitem executá-lo novamente. Para instalação manual, execute os dois arquivos nessa ordem.
+
+As 12 tabelas da aplicação possuem `DataInclusao`, `DataAlteracao`, `UsuarioInclusao` e `UsuarioAlteracao`. Triggers registram datas UTC e o ID do usuário autenticado, enviado em `SESSION_CONTEXT` a cada conexão aberta por `Banco`. Na inclusão, os campos da última alteração ficam nulos; atualizações preservam a inclusão e registram a última alteração. Os IDs referenciam `usuarios.Id`. Registros legados sem informação confiável mantêm os campos nulos, assim como o usuário em operações automáticas ou SQL executado sem contexto. Para SQL externo auditado, defina `sys.sp_set_session_context @key=N'UsuarioId', @value=<id>` na mesma conexão.
+
+Esses campos identificam a criação e a última alteração; não armazenam todas as versões, exclusões ou quais campos foram modificados. Um histórico completo de auditoria poderá ser implementado posteriormente. Novas tabelas deverão ser adicionadas à lista do script de auditoria.
+
+Validações:
+
+```powershell
+dotnet build --no-restore
+node Tests/viacep.cjs
+powershell -NoProfile -ExecutionPolicy Bypass -File Tests/Validar-Auditoria.ps1
+```
+
+O teste de SQL usa a conexão de `appsettings.Local.json`, executa a migração duas vezes, verifica auditoria nas 12 tabelas e sempre desfaz a transação. Não deixa registros de teste persistidos, mas pode avançar sequências de identidade.

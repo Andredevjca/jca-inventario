@@ -36,6 +36,7 @@ public class FuncionariosController : PainelController
     public async Task<IActionResult> Criar()
     {
         ViewData["Title"] = "Novo funcionário";
+        ViewBag.Funcoes = Formatador.Lista(await _servico.ListarAsync("funcoes"));
         ViewBag.Setores = Formatador.Lista(await _servico.ListarAsync("setores"));
         return View("Formulario", new Funcionario());
     }
@@ -53,6 +54,7 @@ public class FuncionariosController : PainelController
         try
         {
             dynamic dados = await _servico.ObterFuncionarioAsync(id);
+            ViewBag.Funcoes = Formatador.Lista(await _servico.ListarAsync("funcoes"));
             ViewBag.Setores = Formatador.Lista(await _servico.ListarAsync("setores"));
             var item = dados.funcionario;
             return View("Formulario", new Funcionario
@@ -62,6 +64,16 @@ public class FuncionariosController : PainelController
                 Email = Convert.ToString(item.Email),
                 Telefone = Convert.ToString(item.Telefone),
                 Matricula = Convert.ToString(item.Matricula),
+                FuncaoId = (int?)item.FuncaoId,
+                Endereco = Convert.ToString(item.Endereco),
+                Numero = Convert.ToString(item.Numero),
+                Cep = Convert.ToString(item.Cep),
+                Bairro = Convert.ToString(item.Bairro),
+                Cidade = Convert.ToString(item.Cidade),
+                Uf = Convert.ToString(item.Uf),
+                Complemento = Convert.ToString(item.Complemento),
+                DataNascimento = (DateTime?)item.DataNascimento,
+                DataAdmissao = (DateTime?)item.DataAdmissao,
                 Cargo = Convert.ToString(item.Cargo),
                 SetorId = Convert.ToInt32(item.SetorId),
                 TipoTrabalho = Convert.ToString(item.TipoTrabalho) ?? "Presencial",
@@ -88,6 +100,7 @@ public class FuncionariosController : PainelController
         ViewData["Title"] = titulo;
         if (!ModelState.IsValid)
         {
+            ViewBag.Funcoes = Formatador.Lista(await _servico.ListarAsync("funcoes"));
             ViewBag.Setores = Formatador.Lista(await _servico.ListarAsync("setores"));
             return View("Formulario", modelo);
         }
@@ -101,6 +114,7 @@ public class FuncionariosController : PainelController
         catch (Exception ex)
         {
             ModelState.AddModelError(string.Empty, ex.Message);
+            ViewBag.Funcoes = Formatador.Lista(await _servico.ListarAsync("funcoes"));
             ViewBag.Setores = Formatador.Lista(await _servico.ListarAsync("setores"));
             return View("Formulario", modelo);
         }

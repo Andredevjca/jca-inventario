@@ -6,6 +6,9 @@ namespace JcaInventario.Repositories;
 
 public partial class RepositorioCadastros
 {
+    public Task<Cadastro?> ObterFuncaoAsync(SqlConnection conexao, int id, SqlTransaction transacao)
+        => conexao.QuerySingleOrDefaultAsync<Cadastro>("SELECT * FROM funcoes WITH (HOLDLOCK) WHERE Id=@id", new { id }, transacao);
+
     public Task<bool> SetorAtivoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.ExecuteScalarAsync<bool>("SELECT CASE WHEN EXISTS(SELECT 1 FROM setores WHERE Id=@SetorId AND Ativo=1) THEN 1 ELSE 0 END", parametros, transacao);
 
@@ -16,7 +19,7 @@ public partial class RepositorioCadastros
         => conexao.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM equipamentos WHERE ResponsavelId=@Id", parametros, transacao);
 
     public Task<int> InserirFuncionarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
-        => conexao.ExecuteScalarAsync<int>("INSERT INTO funcionarios (Nome,Email,Telefone,Matricula,Cargo,SetorId,TipoTrabalho,Ativo,Observacoes) VALUES (@Nome,@Email,@Telefone,@Matricula,@Cargo,@SetorId,@TipoTrabalho,@Ativo,@Observacoes); SELECT CAST(SCOPE_IDENTITY() AS int)", parametros, transacao);
+        => conexao.ExecuteScalarAsync<int>("INSERT INTO funcionarios (Nome,Email,Telefone,Matricula,Cargo,SetorId,TipoTrabalho,Ativo,Observacoes,FuncaoId,Endereco,Numero,Cep,Bairro,Cidade,Uf,Complemento,DataNascimento,DataAdmissao) VALUES (@Nome,@Email,@Telefone,@Matricula,@Cargo,@SetorId,@TipoTrabalho,@Ativo,@Observacoes,@FuncaoId,@Endereco,@Numero,@Cep,@Bairro,@Cidade,@Uf,@Complemento,@DataNascimento,@DataAdmissao); SELECT CAST(SCOPE_IDENTITY() AS int)", parametros, transacao);
 
     public Task<IEnumerable<Equipamento>> ListarEquipamentosResponsavelParaAtualizacaoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync<Equipamento>("SELECT * FROM equipamentos WITH (UPDLOCK, HOLDLOCK) WHERE ResponsavelId=@Id", parametros, transacao);
@@ -28,7 +31,7 @@ public partial class RepositorioCadastros
                         """, parametros, transacao);
 
     public Task<int> AtualizarFuncionarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
-        => conexao.ExecuteAsync("UPDATE funcionarios SET Nome=@Nome,Email=@Email,Telefone=@Telefone,Matricula=@Matricula,Cargo=@Cargo,SetorId=@SetorId,TipoTrabalho=@TipoTrabalho,Ativo=@Ativo,Observacoes=@Observacoes WHERE Id=@Id", parametros, transacao);
+        => conexao.ExecuteAsync("UPDATE funcionarios SET Nome=@Nome,Email=@Email,Telefone=@Telefone,Matricula=@Matricula,FuncaoId=@FuncaoId,Endereco=@Endereco,Numero=@Numero,Cep=@Cep,Bairro=@Bairro,Cidade=@Cidade,Uf=@Uf,Complemento=@Complemento,DataNascimento=@DataNascimento,DataAdmissao=@DataAdmissao,Cargo=@Cargo,SetorId=@SetorId,TipoTrabalho=@TipoTrabalho,Ativo=@Ativo,Observacoes=@Observacoes WHERE Id=@Id", parametros, transacao);
 
     public Task<dynamic> ObterFuncionarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QuerySingleOrDefaultAsync("SELECT f.*,s.Nome Setor FROM funcionarios f JOIN setores s ON s.Id=f.SetorId WHERE f.Id=@id", parametros, transacao);

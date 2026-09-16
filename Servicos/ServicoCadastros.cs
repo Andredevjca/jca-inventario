@@ -38,6 +38,17 @@ public class ServicoCadastros(Banco banco, IRepositorioCadastros repositorio, Se
         await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         if (!await repositorio.SetorAtivoAsync(conexao, funcionario, transacao)) throw new ArgumentException("Selecione um setor ativo.");
         var anterior = funcionario.Id == 0 ? null : await repositorio.ObterFuncionarioParaAtualizacaoAsync(conexao, funcionario, transacao) ?? throw new KeyNotFoundException();
+        if (funcionario.FuncaoId.HasValue)
+        {
+            var funcao = await repositorio.ObterFuncaoAsync(conexao, funcionario.FuncaoId.Value, transacao);
+            if (funcao == null || (!funcao.Ativo && (anterior?.FuncaoId != funcionario.FuncaoId || funcionario.Ativo)))
+                throw new ArgumentException("Selecione uma função ativa.");
+            funcionario.Cargo = funcao.Nome;
+        }
+        else funcionario.Cargo = null;
+        if (funcionario.DataNascimento?.Date > DateTime.Today) throw new ArgumentException("A data de nascimento não pode estar no futuro.");
+        if (funcionario.DataNascimento.HasValue && funcionario.DataAdmissao < funcionario.DataNascimento) throw new ArgumentException("A admissão não pode ser anterior ao nascimento.");
+        funcionario.Cep = funcionario.Cep?.Replace("-", "");
         if (!funcionario.Ativo && await repositorio.ContarEquipamentosResponsavelAsync(conexao, funcionario, transacao) > 0) throw new ArgumentException("Devolva ou transfira os equipamentos antes de inativar o funcionário.");
         if (anterior == null) funcionario.Id = await repositorio.InserirFuncionarioAsync(conexao, funcionario, transacao);
         else

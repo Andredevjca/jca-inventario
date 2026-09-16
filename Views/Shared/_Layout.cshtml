@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
@@ -29,6 +29,7 @@
             <li><a asp-controller="Inventarios" asp-action="Index" title="Inventários" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Inventarios" ? "active" : "")"><i class="fa-solid fa-clipboard-check"></i><span class="menu-texto">Inventários</span></a></li>
             <li class="menu-label">Cadastros</li>
             <li><a asp-controller="Funcionarios" asp-action="Index" title="Funcionários" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Funcionarios" ? "active" : "")"><i class="fa-solid fa-users"></i><span class="menu-texto">Funcionários</span></a></li>
+            <li><a asp-controller="Funcoes" asp-action="Index" title="Funções" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Funcoes" ? "active" : "")"><i class="fa-solid fa-briefcase"></i><span class="menu-texto">Funções</span></a></li>
             <li><a asp-controller="Setores" asp-action="Index" title="Setores" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Setores" ? "active" : "")"><i class="fa-solid fa-building"></i><span class="menu-texto">Setores</span></a></li>
             <li><a asp-controller="Tipos" asp-action="Index" title="Tipos" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Tipos" ? "active" : "")"><i class="fa-solid fa-tags"></i><span class="menu-texto">Tipos de equipamento</span></a></li>
             <li class="menu-label">Consultas</li>
@@ -101,6 +102,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/navigation.js" asp-append-version="true"></script>
+    <script src="~/js/funcionarios.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
