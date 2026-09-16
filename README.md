@@ -126,3 +126,28 @@ Na lista de inventários, use **PDF por setor**, ou abra um inventário e clique
 Os novos inventários preservam os dados dos equipamentos na criação, na tabela `inventario_equipamentos`. Alterações posteriores nos equipamentos, funcionários e setores não modificam esses dados. A conferência continua editável até o encerramento.
 
 Ao reiniciar a aplicação atualizada, o script `Database/estrutura.sql` cria a tabela e captura os dados disponíveis dos inventários antigos que ainda não possuem histórico detalhado. Essa captura não reconstitui a situação original: a tela e o PDF identificam esses registros como legados, e o PDF informa a data da captura. Novas inicializações preservam as cópias existentes.
+## Funcionários, funções e auditoria (MySQL)
+
+O funcionário possui `Endereco`, `Numero`, `Cep`, `Bairro`, `Cidade`, `Uf`, `Complemento`, `DataNascimento` e `DataAdmissao`. O campo Cargo seleciona uma função de **Cadastros > Funções**, vinculada por `FuncaoId`. Os cargos antigos são preservados na migração; renomear uma função mantém `Cargo` sincronizado para os relatórios. A inativação de funções com funcionários ativos é bloqueada.
+
+O formulário consulta [ViaCEP](https://viacep.com.br/) para preencher endereço, bairro, cidade, UF e complemento. O número é manual. Erros e CEP não encontrado permitem preenchimento manual. Nos detalhes, o tempo de empresa é calculado em anos, meses e dias e aparece em badge verde alinhado abaixo do título. Datas futuras e não informadas possuem mensagens próprias.
+
+Depois de `Database/estrutura.sql`, a inicialização chama `Infraestrutura/MigracaoFuncionariosAuditoria.cs` sob a trava de inicialização. Ela verifica cada coluna, referência e trigger antes de criar, permitindo executar novamente. Como DDL no MySQL faz commit implícito, uma falha não desfaz etapas anteriores: corrija a causa e reinicie para continuar. O usuário do banco precisa de permissões de criação/alteração de tabelas e criação de triggers, além das permissões usuais da aplicação.
+
+As 12 tabelas da aplicação recebem `DataInclusao`, `DataAlteracao`, `UsuarioInclusao` e `UsuarioAlteracao`. São 24 triggers (`BEFORE INSERT` e `BEFORE UPDATE`) com datas UTC. A criação é preservada e a atualização registra a última alteração. Registros legados ficam com dados de auditoria nulos quando desconhecidos. Os campos de alteração ficam nulos até a primeira atualização.
+
+`Banco.AbrirAsync` configura `@jca_usuario_id` com o usuário autenticado em cada conexão e limpa o valor em operações sem usuário. A conexão habilita [AllowUserVariables do MySqlConnector](https://mysqlconnector.net/connection-options/). Em SQL externo, defina `SET @jca_usuario_id = <id de usuarios>` na mesma sessão para identificar o responsável. Operações sem esse contexto mantêm o usuário nulo. As referências a `usuarios.Id` preservam a identidade dos responsáveis.
+
+Esses campos registram criação e última alteração; não são um histórico completo de versões ou exclusões. Novas tabelas devem entrar na lista da migração. A publicação permanece MySQL, com `MySqlConnector`, `AUTO_INCREMENT` e `LAST_INSERT_ID()`.
+
+### Validação local
+
+```powershell
+dotnet build
+node Tests/viacep.cjs
+dotnet run --project Tests/MySql/Validacao.csproj
+```
+
+A validação de integração usa exclusivamente MySQL local em `127.0.0.1:3306` (root sem senha por padrão). Para outra credencial local, defina `JCA_MYSQL_TEST_CONNECTION` no ambiente. O teste rejeita servidores remotos, cria um banco temporário com nome aleatório e o remove ao terminar. Verifica repetição da migração, cargos legados, funcionários, funções, bloqueios de validação, triggers nas 12 tabelas e troca/limpeza do contexto de usuário. Não usa `appsettings.Local.json` nem altera o banco de trabalho.
+
+Antes de iniciar a aplicação, configure `ConnectionStrings:Banco` com a conexão **MySQL** do ambiente. A primeira inicialização aplica a migração nesse banco. Configurações locais da branch SQL Server não são convertidas automaticamente.

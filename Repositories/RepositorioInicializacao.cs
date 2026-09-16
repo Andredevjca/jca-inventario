@@ -44,6 +44,7 @@ public class RepositorioInicializacao : IRepositorioInicializacao
     {
         var estrutura = await File.ReadAllTextAsync(Path.Combine(raiz, "Database", "estrutura.sql"));
         await conexao.ExecuteAsync(estrutura);
+        await MigracaoFuncionariosAuditoria.AplicarAsync(conexao);
     }
 
     public Task InserirSetorAusenteAsync(MySqlConnection conexao, MySqlTransaction transacao, string nome)

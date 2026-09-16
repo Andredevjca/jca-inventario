@@ -11,6 +11,7 @@ public interface IRepositorioCadastros
     Task<int> ContarVinculosAtivosAsync(MySqlConnection conexao, TipoCadastro tipo, int id, MySqlTransaction transacao);
     Task<int> AtualizarCadastroAsync(MySqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, MySqlTransaction transacao);
     Task<int> InserirCadastroAsync(MySqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, MySqlTransaction transacao);
+    Task<Cadastro?> ObterFuncaoAsync(MySqlConnection conexao, int id, MySqlTransaction transacao);
     Task<bool> SetorAtivoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
     Task<Funcionario> ObterFuncionarioParaAtualizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
     Task<int> ContarEquipamentosResponsavelAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);

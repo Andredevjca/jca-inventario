@@ -42,5 +42,6 @@ public static class OpcoesInventario
 public enum TipoCadastro
 {
     Setor,
-    TipoEquipamento
+    TipoEquipamento,
+    Funcao
 }

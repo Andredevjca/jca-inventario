@@ -6,17 +6,20 @@ namespace JcaInventario.Repositories;
 
 public partial class RepositorioCadastros
 {
+    public Task<Cadastro?> ObterFuncaoAsync(MySqlConnection conexao, int id, MySqlTransaction transacao)
+        => conexao.QuerySingleOrDefaultAsync<Cadastro>("SELECT * FROM funcoes WHERE Id=@id LOCK IN SHARE MODE", new { id }, transacao);
+
     public Task<bool> SetorAtivoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
         => conexao.ExecuteScalarAsync<bool>("SELECT EXISTS(SELECT 1 FROM setores WHERE Id=@SetorId AND Ativo=1)", parametros, transacao);
 
     public Task<Funcionario> ObterFuncionarioParaAtualizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.QuerySingleOrDefaultAsync<Funcionario>("SELECT * FROM funcionarios WHERE Id=@Id FOR UPDATE", parametros, transacao);
+        => conexao.QuerySingleOrDefaultAsync<Funcionario>("SELECT * FROM funcionarios WHERE Id=@id FOR UPDATE", parametros, transacao);
 
     public Task<int> ContarEquipamentosResponsavelAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
         => conexao.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM equipamentos WHERE ResponsavelId=@Id", parametros, transacao);
 
     public Task<int> InserirFuncionarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.ExecuteScalarAsync<int>("INSERT INTO funcionarios (Nome,Email,Telefone,Matricula,Cargo,SetorId,TipoTrabalho,Ativo,Observacoes) VALUES (@Nome,@Email,@Telefone,@Matricula,@Cargo,@SetorId,@TipoTrabalho,@Ativo,@Observacoes); SELECT LAST_INSERT_ID()", parametros, transacao);
+        => conexao.ExecuteScalarAsync<int>("INSERT INTO funcionarios (Nome,Email,Telefone,Matricula,Cargo,SetorId,TipoTrabalho,Ativo,Observacoes,FuncaoId,Endereco,Numero,Cep,Bairro,Cidade,Uf,Complemento,DataNascimento,DataAdmissao) VALUES (@Nome,@Email,@Telefone,@Matricula,@Cargo,@SetorId,@TipoTrabalho,@Ativo,@Observacoes,@FuncaoId,@Endereco,@Numero,@Cep,@Bairro,@Cidade,@Uf,@Complemento,@DataNascimento,@DataAdmissao); SELECT LAST_INSERT_ID()", parametros, transacao);
 
     public Task<IEnumerable<Equipamento>> ListarEquipamentosResponsavelParaAtualizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
         => conexao.QueryAsync<Equipamento>("SELECT * FROM equipamentos WHERE ResponsavelId=@Id FOR UPDATE", parametros, transacao);
@@ -28,7 +31,7 @@ public partial class RepositorioCadastros
                         """, parametros, transacao);
 
     public Task<int> AtualizarFuncionarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.ExecuteAsync("UPDATE funcionarios SET Nome=@Nome,Email=@Email,Telefone=@Telefone,Matricula=@Matricula,Cargo=@Cargo,SetorId=@SetorId,TipoTrabalho=@TipoTrabalho,Ativo=@Ativo,Observacoes=@Observacoes WHERE Id=@Id", parametros, transacao);
+        => conexao.ExecuteAsync("UPDATE funcionarios SET Nome=@Nome,Email=@Email,Telefone=@Telefone,Matricula=@Matricula,FuncaoId=@FuncaoId,Endereco=@Endereco,Numero=@Numero,Cep=@Cep,Bairro=@Bairro,Cidade=@Cidade,Uf=@Uf,Complemento=@Complemento,DataNascimento=@DataNascimento,DataAdmissao=@DataAdmissao,Cargo=@Cargo,SetorId=@SetorId,TipoTrabalho=@TipoTrabalho,Ativo=@Ativo,Observacoes=@Observacoes WHERE Id=@Id", parametros, transacao);
 
     public Task<dynamic> ObterFuncionarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
         => conexao.QuerySingleOrDefaultAsync("SELECT f.*,s.Nome Setor FROM funcionarios f JOIN setores s ON s.Id=f.SetorId WHERE f.Id=@id", parametros, transacao);
