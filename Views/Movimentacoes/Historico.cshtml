@@ -1,0 +1,75 @@
+@model dynamic
+@{
+    var equipamento = Model.equipamento;
+    var movimentacoes = Formatador.Lista((object?)Model.movimentacoes)
+        .OrderByDescending(item => (DateTime?)item.Data)
+        .ThenByDescending(item => (int)item.Id).ToList();
+}
+<div class="page-header">
+    <div>
+        <h1>Histórico de movimentações</h1>
+        <p class="text-muted mb-0">@equipamento.Marca @equipamento.Modelo · Patrimônio @Formatador.Texto(equipamento.NumeroPatrimonio)</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" asp-action="Index">Voltar</a>
+        <a class="btn btn-outline-secondary" asp-controller="Equipamentos" asp-action="Detalhes" asp-route-id="@equipamento.Id">Detalhes do equipamento</a>
+    </div>
+</div>
+<section class="content-card p-3 mb-3">
+    <h2 class="fw-bold mb-3">Equipamento</h2>
+    <dl class="row detalhe-campo mb-0">
+        <div class="col-md-4"><dt>Tipo</dt><dd>@equipamento.Tipo</dd></div>
+        <div class="col-md-4"><dt>Número de série</dt><dd>@Formatador.Texto(equipamento.NumeroSerie)</dd></div>
+        <div class="col-md-4"><dt>Status atual</dt><dd><span class="status-badge @Formatador.ClasseStatus(Convert.ToString(equipamento.Status))">@equipamento.Status</span></dd></div>
+        <div class="col-md-4"><dt>Responsável atual</dt><dd>@Formatador.Texto(equipamento.Responsavel)</dd></div>
+        <div class="col-md-4"><dt>Setor atual</dt><dd>@Formatador.Texto(equipamento.Setor)</dd></div>
+        <div class="col-md-4"><dt>Localização atual</dt><dd>@Formatador.Texto(equipamento.Localizacao)</dd></div>
+    </dl>
+</section>
+<section class="content-card p-3">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold mb-1">Linha do tempo</h2>
+        <p class="text-muted mb-0">Todas as movimentações, da mais recente para a mais antiga.</p>
+    </div>
+    @if (movimentacoes.Count == 0)
+    {
+        <p class="vazio">Nenhuma movimentação registrada para este equipamento.</p>
+    }
+    else
+    {
+        <ol class="movimentacoes-timeline">
+            @foreach (var item in movimentacoes)
+            {
+                <li class="movimentacoes-evento">
+                    <article class="movimentacoes-evento-card">
+                        <h3 class="fw-bold mb-1">@item.Tipo</h3>
+                        <p class="text-muted mb-3">@Formatador.DataHora(item.Data as DateTime?) · @Formatador.Texto(item.Usuario)</p>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <h4 class="text-muted mb-2">Antes</h4>
+                                <dl class="mb-0">
+                                    <dt>Responsável</dt><dd>@Formatador.Texto(item.ResponsavelAnterior)</dd>
+                                    <dt>Setor</dt><dd>@Formatador.Texto(item.SetorAnterior)</dd>
+                                    <dt>Localização</dt><dd>@Formatador.Texto(item.LocalizacaoAnterior)</dd>
+                                    <dt>Status</dt><dd>@Formatador.Texto(item.StatusAnterior)</dd>
+                                </dl>
+                            </div>
+                            <div class="col-sm-6">
+                                <h4 class="text-muted mb-2">Depois</h4>
+                                <dl class="mb-0">
+                                    <dt>Responsável</dt><dd>@Formatador.Texto(item.NovoResponsavel)</dd>
+                                    <dt>Setor</dt><dd>@Formatador.Texto(item.NovoSetor)</dd>
+                                    <dt>Localização</dt><dd>@Formatador.Texto(item.NovaLocalizacao)</dd>
+                                    <dt>Status</dt><dd>@Formatador.Texto(item.NovoStatus)</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <dl class="mb-0 mt-2">
+                            <dt>Observação</dt><dd class="movimentacoes-observacao mb-0">@Formatador.Texto(item.Observacao)</dd>
+                        </dl>
+                    </article>
+                </li>
+            }
+        </ol>
+    }
+</section>

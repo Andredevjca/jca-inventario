@@ -549,3 +549,58 @@ body.login-body .login-btn {
   z-index: 2000;
 }
 #app-page:focus { outline: none; }
+
+.movimentacoes-timeline {
+  position: relative;
+  list-style: none;
+  padding: 12px 0;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+.movimentacoes-timeline::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: #d8e0ec;
+}
+.movimentacoes-evento {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr);
+  margin-bottom: 24px;
+}
+.movimentacoes-evento:last-child { margin-bottom: 0; }
+.movimentacoes-evento::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--sidebar-active, #294b8f);
+  box-shadow: 0 0 0 2px var(--sidebar-active, #294b8f);
+}
+.movimentacoes-evento-card {
+  grid-column: 1;
+  padding: 18px;
+  border: 1px solid #d8e0ec;
+  border-radius: var(--radius);
+  background: #f8fafc;
+  overflow-wrap: anywhere;
+}
+.movimentacoes-evento:nth-child(even) .movimentacoes-evento-card { grid-column: 3; }
+.movimentacoes-evento-card h3,
+.movimentacoes-evento-card h4 { font-size: inherit; }
+.movimentacoes-observacao { white-space: pre-wrap; }
+@media (max-width: 767.98px) {
+  .movimentacoes-evento { display: block; padding-top: 38px; }
+  .movimentacoes-evento::before { top: 10px; }
+  .movimentacoes-evento-card { position: relative; }
+}
