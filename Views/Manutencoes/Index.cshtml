@@ -20,7 +20,7 @@
                     <th>Problema</th>
                     <th>Valor</th>
                     <th>Situação</th>
-                    <th>Ações</th>
+                    <th class="alinhar_a_direita">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,7 +36,7 @@
                         <td>@item.Problema</td>
                         <td>@Formatador.Moeda(Convert.ToDecimal(item.Valor ?? 0))</td>
                         <td><span class="status-badge @Formatador.ClasseStatus(encerrada ? "Encerrado" : "Em manutenção")">@(encerrada ? "Encerrado" : "Em manutenção")</span></td>
-                        <td>
+                        <td class="alinhar_a_direita">
                             @if (!encerrada)
                             {
                                 <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"><i class="fa-solid fa-pen"></i></a>

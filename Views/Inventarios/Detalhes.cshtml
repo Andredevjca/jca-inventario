@@ -35,7 +35,7 @@
                     <th>Localização</th>
                     <th>Situação</th>
                     <th>Observação</th>
-                    <th>Ações</th>
+                    <th class="alinhar_a_direita">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,7 +49,7 @@
                         <td>@item.Localizacao</td>
                         <td><span class="status-badge @Formatador.ClasseStatus(Convert.ToString(item.Situacao))">@item.Situacao</span></td>
                         <td>@Formatador.Texto(item.Observacao)</td>
-                        <td>
+                        <td class="alinhar_a_direita">
                             @if (!encerrado)
                             {
                                 <form asp-action="Conferir" asp-route-id="@inventario.Id" method="post" class="d-flex gap-2">

@@ -9,7 +9,7 @@
                 <th>Responsável anterior</th>
                 <th>Novo responsável</th>
                 <th>Usuário</th>
-                <th class="text-center">Histórico</th>
+                <th class="alinhar_a_direita">Histórico</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +30,7 @@
                         <td>@Formatador.Texto(item.ResponsavelAnterior)</td>
                         <td>@Formatador.Texto(item.NovoResponsavel)</td>
                         <td>@Formatador.Texto(item.Usuario)</td>
-                        <td class="text-center">
+                        <td class="alinhar_a_direita">
                             <a class="btn btn-sm btn-outline-secondary" asp-controller="Movimentacoes" asp-action="Historico" asp-route-id="@item.EquipamentoId"
                                title="Ver todas as movimentações" aria-label="Ver todas as movimentações do equipamento @Formatador.Texto(item.NumeroPatrimonio ?? item.Modelo)">
                                 <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>

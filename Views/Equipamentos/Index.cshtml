@@ -50,7 +50,7 @@
                     <th>Setor</th>
                     <th>Localização</th>
                     <th>Status</th>
-                    <th>Ações</th>
+                    <th class="alinhar_a_direita">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,7 +65,7 @@
                         <td>@Formatador.Texto(item.Setor)</td>
                         <td>@item.Localizacao</td>
                         <td><span class="status-badge @Formatador.ClasseStatus(Convert.ToString(item.Status))">@item.Status</span></td>
-                        <td class="text-nowrap">
+                        <td class="text-nowrap alinhar_a_direita">
                             <a class="btn btn-sm btn-outline-secondary" asp-action="Detalhes" asp-route-id="@item.Id" title="Visualizar"><i class="fa-solid fa-eye"></i></a>
                             <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id" title="Editar"><i class="fa-solid fa-pen"></i></a>
                         </td>

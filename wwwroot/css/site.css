@@ -604,3 +604,7 @@ body.login-body .login-btn {
   .movimentacoes-evento::before { top: 10px; }
   .movimentacoes-evento-card { position: relative; }
 }
+
+.alinhar_a_direita {
+    text-align: right;
+}

@@ -19,7 +19,7 @@
                     <th>Pendentes</th>
                     <th>Divergências</th>
                     <th>Situação</th>
-                    <th>Ações</th>
+                    <th class="alinhar_a_direita">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,7 +34,7 @@
                         <td>@item.Pendentes</td>
                         <td>@item.Divergencias</td>
                         <td><span class="status-badge @Formatador.ClasseStatus(encerrado ? "Encerrado" : "Em uso")">@(encerrado ? "Encerrado" : "Em andamento")</span></td>
-                        <td>
+                        <td class="alinhar_a_direita">
                             <a class="btn btn-outline-secondary" asp-action="Detalhes" asp-route-id="@item.Id">Abrir conferência</a>
                             <a class="btn btn-outline-secondary" asp-action="Pdf" asp-route-id="@item.Id" data-no-spa>PDF por setor</a>
                         </td>

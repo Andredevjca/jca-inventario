@@ -18,7 +18,7 @@
                     <th>Setor</th>
                     <th>E-mail</th>
                     <th>Status</th>
-                    <th>Ações</th>
+                    <th class="alinhar_a_direita">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@
                         <td>@item.Setor</td>
                         <td>@Formatador.Texto(item.Email)</td>
                         <td><span class="status-badge @Formatador.ClasseStatus(ativo ? "Ativo" : "Inativo")">@(ativo ? "Ativo" : "Inativo")</span></td>
-                        <td class="text-nowrap">
+                        <td class="text-nowrap alinhar_a_direita">
                             <a class="btn btn-sm btn-outline-secondary" asp-action="Detalhes" asp-route-id="@item.Id"><i class="fa-solid fa-eye"></i></a>
                             <a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"><i class="fa-solid fa-pen"></i></a>
                         </td>
