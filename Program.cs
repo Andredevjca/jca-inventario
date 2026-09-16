@@ -24,7 +24,8 @@ else
     if (OperatingSystem.IsWindows()) protecao.ProtectKeysWithDpapi();
 }
 
-construtor.Services.AddControllersWithViews();
+construtor.Services.AddControllersWithViews(opcoes =>
+    opcoes.ModelMetadataDetailsProviders.Add(new JcaInventario.Configuracoes.MensagensValidacaoPortugues()));
 construtor.Services.AddHttpContextAccessor();
 construtor.Services.AdicionarDependencias();
 
