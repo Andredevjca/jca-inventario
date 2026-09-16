@@ -4,16 +4,16 @@ using JcaInventario.Interfaces.Services;
 using JcaInventario.Models;
 using JcaInventario.Configuracoes;
 using JcaInventario.ViewModels;
-using MySqlConnector;
+using Microsoft.Data.SqlClient;
 using System.Text.Json;
 namespace JcaInventario.Servicos;
 
 public class ServicoEquipamentos(Banco banco, IRepositorioEquipamentos repositorio) : IServicoEquipamentos
 {
-    public async Task RegistrarHistoricoAsync(MySqlConnection conexao, MySqlTransaction transacao, int id, int usuario, string descricao, object? anterior, object? novo)
+    public async Task RegistrarHistoricoAsync(SqlConnection conexao, SqlTransaction transacao, int id, int usuario, string descricao, object? anterior, object? novo)
         => await repositorio.InserirHistoricoAsync(conexao, new { id, usuario, descricao, antes = anterior == null ? null : JsonSerializer.Serialize(anterior), depois = novo == null ? null : JsonSerializer.Serialize(novo) }, transacao);
 
-    private async Task ValidarAsync(MySqlConnection conexao, MySqlTransaction transacao, Equipamento equipamento)
+    private async Task ValidarAsync(SqlConnection conexao, SqlTransaction transacao, Equipamento equipamento)
     {
         if (!OpcoesInventario.Status.Contains(equipamento.Status) || !OpcoesInventario.Localizacoes.Contains(equipamento.Localizacao)) throw new ArgumentException("Status ou localização inválidos.");
         if (equipamento.ValorAquisicao < 0) throw new ArgumentException("O valor não pode ser negativo.");
@@ -25,7 +25,7 @@ public class ServicoEquipamentos(Banco banco, IRepositorioEquipamentos repositor
         equipamento.NumeroSerie = string.IsNullOrWhiteSpace(equipamento.NumeroSerie) ? null : equipamento.NumeroSerie.Trim();
     }
 
-    public async Task RegistrarMovimentacaoAsync(MySqlConnection conexao, MySqlTransaction transacao, Equipamento? anterior, Equipamento novo, int usuario, string tipo, string? observacao)
+    public async Task RegistrarMovimentacaoAsync(SqlConnection conexao, SqlTransaction transacao, Equipamento? anterior, Equipamento novo, int usuario, string tipo, string? observacao)
     {
         var setorAnterior = anterior?.ResponsavelId == null ? (int?)null : await repositorio.ObterSetorResponsavelAsync(conexao, new { Id = anterior.ResponsavelId }, transacao);
         var novoSetor = novo.ResponsavelId == null ? (int?)null : await repositorio.ObterSetorResponsavelAsync(conexao, new { Id = novo.ResponsavelId }, transacao);
@@ -35,7 +35,7 @@ public class ServicoEquipamentos(Banco banco, IRepositorioEquipamentos repositor
     public async Task<int> SalvarAsync(Equipamento equipamento, int usuario)
     {
         await using var conexao = await banco.AbrirAsync();
-        await using var transacao = await conexao.BeginTransactionAsync();
+        await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         var anterior = equipamento.Id == 0 ? null : await repositorio.ObterParaAtualizacaoAsync(conexao, equipamento, transacao) ?? throw new KeyNotFoundException();
         await ValidarAsync(conexao, transacao, equipamento);
         if (equipamento.Status == "Em manutenção" && anterior?.Status != "Em manutenção") throw new ArgumentException("Utilize o cadastro de manutenção para enviar o equipamento.");
@@ -57,7 +57,7 @@ public class ServicoEquipamentos(Banco banco, IRepositorioEquipamentos repositor
     {
         if (!OpcoesInventario.Movimentacoes.Contains(movimento.Tipo)) throw new ArgumentException("Tipo de movimentação inválido.");
         await using var conexao = await banco.AbrirAsync();
-        await using var transacao = await conexao.BeginTransactionAsync();
+        await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         var anterior = await repositorio.ObterParaMovimentacaoAsync(conexao, new { id }, transacao) ?? throw new KeyNotFoundException();
         var novo = JsonSerializer.Deserialize<Equipamento>(JsonSerializer.Serialize(anterior))!;
         if (anterior.Status == "Em manutenção" || movimento.Status == "Em manutenção") throw new ArgumentException("Envie e retorne pela tela de manutenções.");

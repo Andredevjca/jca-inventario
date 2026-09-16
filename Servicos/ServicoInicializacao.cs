@@ -16,7 +16,7 @@ public class ServicoInicializacao(Banco banco, IRepositorioInicializacao reposit
         try
         {
             await repositorio.CriarEstruturaAsync(conexao, raiz);
-            await using var transacao = await conexao.BeginTransactionAsync();
+            await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
             foreach (var setor in new[] { "Desenvolvimento", "Suporte", "Financeiro", "Comercial", "Administrativo", "Recursos Humanos" })
                 await repositorio.InserirSetorAusenteAsync(conexao, transacao, setor);
             foreach (var tipo in new[] { "Notebook", "Desktop", "Monitor", "Teclado", "Mouse", "Headset", "Impressora", "Celular", "Tablet", "Nobreak", "Outros" })

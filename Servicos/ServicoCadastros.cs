@@ -17,7 +17,7 @@ public class ServicoCadastros(Banco banco, IRepositorioCadastros repositorio, Se
     public async Task<object> SalvarCadastroAsync(TipoCadastro tipo, Cadastro cadastro)
     {
         await using var conexao = await banco.AbrirAsync();
-        await using var transacao = await conexao.BeginTransactionAsync();
+        await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         if (cadastro.Id > 0)
         {
             if (await repositorio.ObterCadastroParaAtualizacaoAsync(conexao, tipo, cadastro.Id, transacao) == null) throw new KeyNotFoundException();
@@ -35,7 +35,7 @@ public class ServicoCadastros(Banco banco, IRepositorioCadastros repositorio, Se
         if (!OpcoesInventario.TiposTrabalho.Contains(funcionario.TipoTrabalho)) throw new ArgumentException("Tipo de trabalho inválido.");
         funcionario.Matricula = string.IsNullOrWhiteSpace(funcionario.Matricula) ? null : funcionario.Matricula.Trim();
         await using var conexao = await banco.AbrirAsync();
-        await using var transacao = await conexao.BeginTransactionAsync();
+        await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         if (!await repositorio.SetorAtivoAsync(conexao, funcionario, transacao)) throw new ArgumentException("Selecione um setor ativo.");
         var anterior = funcionario.Id == 0 ? null : await repositorio.ObterFuncionarioParaAtualizacaoAsync(conexao, funcionario, transacao) ?? throw new KeyNotFoundException();
         if (!funcionario.Ativo && await repositorio.ContarEquipamentosResponsavelAsync(conexao, funcionario, transacao) > 0) throw new ArgumentException("Devolva ou transfira os equipamentos antes de inativar o funcionário.");

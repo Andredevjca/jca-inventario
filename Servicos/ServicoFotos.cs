@@ -24,7 +24,7 @@ public class ServicoFotos(Banco banco, IRepositorioEquipamentos repositorio, Ser
     public Task RemoverAsync(int id, int usuario) => AlterarFotoAsync(id, null, usuario);
     private async Task AlterarFotoAsync(int id, string? nome, int usuario)
     {
-        await using var conexao = await banco.AbrirAsync(); await using var transacao = await conexao.BeginTransactionAsync();
+        await using var conexao = await banco.AbrirAsync(); await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         var equipamento = await repositorio.ObterParaAtualizacaoAsync(conexao, new { id }, transacao) ?? throw new KeyNotFoundException();
         await repositorio.AtualizarFotoAsync(conexao, id, nome, transacao);
         await servicoEquipamentos.RegistrarHistoricoAsync(conexao, transacao, id, usuario, nome == null ? "Foto removida" : "Foto alterada", equipamento.Foto, nome);

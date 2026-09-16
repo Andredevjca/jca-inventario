@@ -1,4 +1,4 @@
-using MySqlConnector;
+using Microsoft.Data.SqlClient;
 
 namespace JcaInventario.Infraestrutura;
 
@@ -14,9 +14,9 @@ public class ConexaoBanco
 
     public string Conexao => _stringConexao;
 
-    public async Task<MySqlConnection> AbrirAsync()
+    public async Task<SqlConnection> AbrirAsync()
     {
-        var conexao = new MySqlConnection(_stringConexao);
+        var conexao = new SqlConnection(_stringConexao);
         await conexao.OpenAsync();
         return conexao;
     }

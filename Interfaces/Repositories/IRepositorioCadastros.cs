@@ -1,29 +1,29 @@
 using JcaInventario.Helpers;
 using JcaInventario.Models;
-using MySqlConnector;
+using Microsoft.Data.SqlClient;
 
 namespace JcaInventario.Interfaces.Repositories;
 
 public interface IRepositorioCadastros
 {
-    Task<IEnumerable<dynamic>> ListarAsync(MySqlConnection conexao, string cadastro);
-    Task<int?> ObterCadastroParaAtualizacaoAsync(MySqlConnection conexao, TipoCadastro tipo, int id, MySqlTransaction transacao);
-    Task<int> ContarVinculosAtivosAsync(MySqlConnection conexao, TipoCadastro tipo, int id, MySqlTransaction transacao);
-    Task<int> AtualizarCadastroAsync(MySqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, MySqlTransaction transacao);
-    Task<int> InserirCadastroAsync(MySqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, MySqlTransaction transacao);
-    Task<bool> SetorAtivoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<Funcionario> ObterFuncionarioParaAtualizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<int> ContarEquipamentosResponsavelAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<int> InserirFuncionarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<IEnumerable<Equipamento>> ListarEquipamentosResponsavelParaAtualizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<int> InserirTransferenciaSetorAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<int> AtualizarFuncionarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<dynamic> ObterFuncionarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<IEnumerable<dynamic>> ListarEquipamentosFuncionarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<IEnumerable<dynamic>> ListarHistoricoFuncionarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<dynamic> ObterSetorAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<IEnumerable<dynamic>> ListarFuncionariosSetorAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<IEnumerable<dynamic>> ListarEquipamentosSetorAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<int> InserirUsuarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
-    Task<int> AtualizarUsuarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null);
+    Task<IEnumerable<dynamic>> ListarAsync(SqlConnection conexao, string cadastro);
+    Task<int?> ObterCadastroParaAtualizacaoAsync(SqlConnection conexao, TipoCadastro tipo, int id, SqlTransaction transacao);
+    Task<int> ContarVinculosAtivosAsync(SqlConnection conexao, TipoCadastro tipo, int id, SqlTransaction transacao);
+    Task<int> AtualizarCadastroAsync(SqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, SqlTransaction transacao);
+    Task<int> InserirCadastroAsync(SqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, SqlTransaction transacao);
+    Task<bool> SetorAtivoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<Funcionario> ObterFuncionarioParaAtualizacaoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<int> ContarEquipamentosResponsavelAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<int> InserirFuncionarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<IEnumerable<Equipamento>> ListarEquipamentosResponsavelParaAtualizacaoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<int> InserirTransferenciaSetorAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<int> AtualizarFuncionarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<dynamic> ObterFuncionarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<IEnumerable<dynamic>> ListarEquipamentosFuncionarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<IEnumerable<dynamic>> ListarHistoricoFuncionarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<dynamic> ObterSetorAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<IEnumerable<dynamic>> ListarFuncionariosSetorAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<IEnumerable<dynamic>> ListarEquipamentosSetorAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<int> InserirUsuarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
+    Task<int> AtualizarUsuarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
 }

@@ -11,7 +11,7 @@ public class ServicoInventario(Banco banco, IRepositorioInventario repositorio, 
     public async Task<byte[]> GerarPdfAsync(int id)
     {
         await using var conexao = await banco.AbrirAsync();
-        await using var transacao = await conexao.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead);
+        await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead);
         var inventario = await repositorio.ObterInventarioAsync(conexao, new { id }, transacao)
             ?? throw new KeyNotFoundException();
         var itens = (await repositorio.ListarRelatorioAsync(conexao, id, transacao)).ToList();
@@ -29,7 +29,7 @@ public class ServicoInventario(Banco banco, IRepositorioInventario repositorio, 
     }
     public async Task<object> CriarInventarioAsync(NovoInventarioViewModel inventario, int usuario)
     {
-        await using var conexao = await banco.AbrirAsync(); await using var transacao = await conexao.BeginTransactionAsync();
+        await using var conexao = await banco.AbrirAsync(); await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         var id = await repositorio.InserirInventarioAsync(conexao, new { inventario.Nome, usuario = usuario }, transacao);
         await repositorio.InserirConferenciasAsync(conexao, new { id }, transacao);
         await transacao.CommitAsync(); return new { id };
@@ -45,7 +45,7 @@ public class ServicoInventario(Banco banco, IRepositorioInventario repositorio, 
     {
         if (!new[] { "Conferido", "Pendente", "Divergência" }.Contains(conferencia.Situacao)) throw new ArgumentException("Situação inválida.");
         if (conferencia.Situacao == "Divergência" && string.IsNullOrWhiteSpace(conferencia.Observacao)) throw new ArgumentException("Descreva a divergência encontrada.");
-        await using var conexao = await banco.AbrirAsync(); await using var transacao = await conexao.BeginTransactionAsync();
+        await using var conexao = await banco.AbrirAsync(); await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         var inventario = await repositorio.ObterInventarioParaAtualizacaoAsync(conexao, new { id }, transacao) ?? throw new KeyNotFoundException();
         if (Convert.ToBoolean(inventario.Encerrado)) throw new ArgumentException("O inventário já está encerrado.");
         var anterior = await repositorio.ObterConferenciaParaAtualizacaoAsync(conexao, new { id, equipamentoId }, transacao) ?? throw new KeyNotFoundException();
@@ -55,7 +55,7 @@ public class ServicoInventario(Banco banco, IRepositorioInventario repositorio, 
     }
     public async Task EncerrarAsync(int id)
     {
-        await using var conexao = await banco.AbrirAsync(); await using var transacao = await conexao.BeginTransactionAsync();
+        await using var conexao = await banco.AbrirAsync(); await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         var inventario = await repositorio.ObterInventarioParaAtualizacaoAsync(conexao, new { id }, transacao) ?? throw new KeyNotFoundException();
         if (Convert.ToBoolean(inventario.Encerrado)) throw new ArgumentException("O inventário já está encerrado.");
         if (await repositorio.ContarPendentesAsync(conexao, new { id }, transacao) > 0) throw new ArgumentException("Confira todos os equipamentos antes de encerrar.");

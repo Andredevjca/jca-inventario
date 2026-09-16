@@ -1,6 +1,6 @@
 # JCA Soluções — Inventário de equipamentos
 
-Sistema independente em ASP.NET Core 10, C#, Dapper e MySQL. Frontend em HTML, CSS, JavaScript e Bootstrap, com Font Awesome e Nunito. O CSS de layout e de login e os arquivos do Bootstrap foram reaproveitados de `C:\controle-alugueis`; o projeto de referência não foi alterado.
+Sistema independente em ASP.NET Core 10, C#, Dapper e SQL Server. Frontend em HTML, CSS, JavaScript e Bootstrap, com Font Awesome e Nunito. O CSS de layout e de login e os arquivos do Bootstrap foram reaproveitados de `C:\controle-alugueis`; o projeto de referência não foi alterado.
 
 ## Executar nesta máquina
 
@@ -8,30 +8,10 @@ Sistema independente em ASP.NET Core 10, C#, Dapper e MySQL. Frontend em HTML, C
 
 Abra `JcaInventario.slnx`, selecione o projeto `JcaInventario` como projeto de inicialização e execute o perfil **JcaInventario** com **F5** ou **Ctrl+F5**. A instalação do Visual Studio deve oferecer suporte ao SDK .NET 10 e ter a carga de trabalho de desenvolvimento ASP.NET instalada.
 
-O servidor MySQL configurado precisa estar em execução. Para usar a instância local preparada pelo script enquanto depura no Visual Studio, execute `.\iniciar-local.ps1 -SomenteBanco` em um terminal e mantenha-o aberto.
-
-A página principal está em `Views/Inicio/Index.cshtml`; o layout compartilhado está em `Views/Shared/_Layout.cshtml`. CSS e JavaScript continuam em `wwwroot`, consumindo a API REST.
-
-No PowerShell, dentro desta pasta:
+O SQL Server configurado precisa estar acessível. O script abaixo inicia somente a aplicação em **http://localhost:5085**, usando a conexão configurada; ele não instala nem inicia um banco de dados.
 
 ```powershell
 .\iniciar-local.ps1
-```
-
-O script utiliza o MySQL 8.4 já instalado no Laragon, prepara uma instância própria na porta **3309**, restrita ao endereço local, e inicia o sistema em **http://localhost:5085**. Os dados ficam em `Dados/mysql-local`. Uma senha aleatória para o MySQL é criada e guardada nos arquivos locais ignorados pelo Git. Ao encerrar o script, o servidor MySQL iniciado por ele é desligado.
-
-Se a política do PowerShell bloquear a execução do arquivo, execute:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\iniciar-local.ps1
-```
-
-Esse comando aplica a opção somente ao processo, sem alterar a política permanente da máquina.
-
-Para uma instalação do MySQL em outro caminho:
-
-```powershell
-.\iniciar-local.ps1 -ExecutavelMySql 'C:\caminho\mysql\bin\mysqld.exe'
 ```
 
 ## Acesso inicial
@@ -41,33 +21,33 @@ Para uma instalação do MySQL em outro caminho:
 
 O administrador tem acesso completo. A senha inicial solicitada é armazenada somente como hash PBKDF2-SHA256, com sal aleatório e 600.000 iterações. Altere a senha em **Configurações → Usuários** antes de disponibilizar o sistema para outras pessoas. Uma senha já alterada nunca é redefinida pela inicialização.
 
-## Usar um servidor MySQL existente
+## SQL Server e conexão
 
-Pré-requisitos: SDK .NET 10 para desenvolvimento e servidor MySQL 8.0 ou superior em execução. A aplicação cria o banco e sua estrutura; não instala o serviço MySQL do sistema operacional.
+Configure `ConnectionStrings:Banco` em `appsettings.json`, `appsettings.Local.json` ou na variável de ambiente `ConnectionStrings__Banco` (nessa ordem de prioridade crescente). O arquivo local não é publicado. O banco configurado nesta instalação é **dbActyon_Inventario**, no servidor **192.168.2.154**.
 
-Configure `ConnectionStrings:Banco` em `appsettings.Local.json` ou por variável de ambiente. O arquivo local não deve ser versionado. Exemplo para um servidor com TLS:
+Exemplo sem credenciais reais:
 
-```powershell
-$env:ConnectionStrings__Banco = 'Server=servidor;Port=3306;Database=jca_inventario;User ID=usuario;Password=sua-senha;SslMode=Required'
-dotnet restore
-dotnet run
+```text
+Server=192.168.2.154;Database=dbActyon_Inventario;User ID=usuario;Password=sua-senha;Encrypt=True;TrustServerCertificate=True
 ```
 
-Para uma conexão apenas local sem TLS, pode-se utilizar `SslMode=None;AllowPublicKeyRetrieval=True`, como faz o script de desenvolvimento. Use TLS e uma conta apropriada na instalação de produção.
+A conexão usa TLS e aceita o certificado apresentado pelo servidor interno (`TrustServerCertificate=True`). Se houver um certificado válido para o endereço usado, configure essa opção como `False`.
 
-A conta de conexão precisa de permissão para criar o banco, tabelas, índices e relacionamentos e para ler e gravar os dados. Não é necessário executar um arquivo SQL manualmente. O “usuário administrador” criado pela aplicação é o usuário do sistema web, separado da conta de conexão do MySQL.
+O projeto usa [Microsoft.Data.SqlClient 6.1.6](https://www.nuget.org/packages/Microsoft.Data.SqlClient/6.1.6). A imagem do SSMS informa a versão da ferramenta, não a versão do mecanismo SQL Server; consulte `SELECT @@VERSION` para identificar o servidor.
 
-## Inicialização automática
+## Inicialização automática e instalação manual
 
-Antes de atender requisições, a aplicação:
+A aplicação cria o banco configurado se estiver ausente, obtém uma trava de sessão no SQL Server e cria as tabelas, índices e relacionamentos. Depois insere somente os setores, tipos e administrador inicial que ainda não existirem. A conta de conexão precisa das permissões correspondentes.
 
-1. Cria o banco configurado, se ausente, com `utf8mb4`.
-2. Obtém uma trava no MySQL para impedir inicializações concorrentes.
-3. Cria tabelas, relacionamentos e índices ausentes.
-4. Insere os seis setores e onze tipos iniciais que ainda não existirem.
-5. Cria `admin@admin.com` somente se esse e-mail ainda não existir.
+Para preparar o banco manualmente no SSMS:
 
-Reiniciar não apaga registros, não duplica as cargas iniciais e não troca a senha existente. `CREATE TABLE IF NOT EXISTS` prepara esta primeira versão; futuras alterações em colunas de uma instalação existente devem ser entregues com uma migração específica.
+1. Execute `Database/criar-banco.sql`, que cria **dbActyon_Inventario** se necessário.
+2. Selecione **dbActyon_Inventario** na janela de consulta e execute `Database/estrutura.sql`.
+3. Inicie a aplicação para inserir os cadastros iniciais.
+
+Reexecutar os scripts não apaga registros nem recria tabelas existentes. Patrimônio, série e matrícula usam índices únicos filtrados para permitir vários valores nulos. Textos usam `NVARCHAR`, os IDs usam `IDENTITY`, e os documentos JSON do histórico ficam em `NVARCHAR(MAX)`.
+
+Esta conversão cria a estrutura no SQL Server; **não transfere os registros de uma instalação MySQL**. Preserve o banco antigo e seus backups caso seja necessária uma migração de dados. Não execute um dump MySQL diretamente no SQL Server.
 
 ## Funcionalidades
 
@@ -93,15 +73,15 @@ Repositorios/      Consultas de equipamentos e histórico com Dapper
 Modelos/          Entidades e validações
 DTOs/             Solicitações da API
 Configuracoes/    Opções permitidas no inventário
-Infraestrutura/   Conexão e inicialização do MySQL
+Infraestrutura/   Conexão e inicialização do SQL Server
 Views/            Página Razor e layout compartilhado
 wwwroot/          CSS, JavaScript e Bootstrap
-Dados/            Arquivos locais, fotos, chaves e MySQL de desenvolvimento
+Dados/            Arquivos locais, fotos e chaves
 ```
 
 ## Validação
 
-As pastas `Dados/` e `publicacao/` são locais e ignoradas pelo Git, assim como os artefatos de compilação e as configurações locais. Cada desenvolvedor deve configurar seu próprio MySQL conforme as instruções acima.
+As pastas `Dados/` e `publicacao/` são locais e ignoradas pelo Git, assim como os artefatos de compilação e as configurações locais. Cada desenvolvedor deve configurar seu próprio SQL Server conforme as instruções acima.
 
 ```powershell
 dotnet build
@@ -111,12 +91,16 @@ Get-Content .\wwwroot\js\aplicacao.js -Raw | node --check
 ## Publicação e dados
 
 ```powershell
-dotnet publish -c Release -o publicacao
+.\publicar-iis.ps1
 ```
+
+A publicação fica em `publicacao/win-x64` e inclui o runtime .NET 10 para Windows 64 bits. Copie todo o conteúdo dessa pasta, incluindo o `web.config`, para o site no IIS. Pare o pool durante a substituição e preserve `Dados` e as configurações específicas do servidor. No pool, use **No Managed Code** e **Enable 32-Bit Applications = False**.
+
+O IIS ainda precisa do ASP.NET Core Module V2, instalado pelo [Hosting Bundle](https://learn.microsoft.com/aspnet/core/host-and-deploy/iis/hosting-bundle?view=aspnetcore-10.0). Se o módulo estiver desatualizado, instale ou repare o Hosting Bundle do .NET 10 no servidor e reinicie o IIS. O Windows do servidor também precisa ser compatível com .NET 10. A publicação com runtime incluído resolve a dependência do runtime compartilhado associada ao erro 500.31, mas não substitui o módulo do IIS.
 
 Mantenha `Database/estrutura.sql` junto à aplicação publicada. Configure a conexão no ambiente de destino e use HTTPS no servidor/proxy. Em produção Windows, as chaves de sessão persistem em `Dados/Chaves` protegidas por DPAPI para a conta do processo. Em desenvolvimento, as sessões são temporárias e exigem novo login ao reiniciar.
 
-Inclua o banco MySQL e `Dados/Fotos` no backup. Restrinja o acesso aos arquivos de configuração, às chaves e à pasta de dados. Nunito e Font Awesome são carregados por CDN; Bootstrap e o CSS principal estão no próprio projeto.
+Inclua o banco SQL Server e `Dados/Fotos` no backup. Restrinja o acesso aos arquivos de configuração, às chaves e à pasta de dados. Nunito e Font Awesome são carregados por CDN; Bootstrap e o CSS principal estão no próprio projeto.
 
 
 ## PDF do inventário por setor

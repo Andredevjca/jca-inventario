@@ -2,7 +2,7 @@ using Dapper;
 using JcaInventario.Helpers;
 using JcaInventario.Interfaces.Repositories;
 using JcaInventario.Models;
-using MySqlConnector;
+using Microsoft.Data.SqlClient;
 
 namespace JcaInventario.Repositories;
 
@@ -18,7 +18,7 @@ public partial class RepositorioCadastros : IRepositorioCadastros
         };
     }
 
-    public Task<IEnumerable<dynamic>> ListarAsync(MySqlConnection conexao, string cadastro)
+    public Task<IEnumerable<dynamic>> ListarAsync(SqlConnection conexao, string cadastro)
     {
         var consulta = cadastro switch
         {
@@ -31,10 +31,10 @@ public partial class RepositorioCadastros : IRepositorioCadastros
         return conexao.QueryAsync(consulta);
     }
 
-    public Task<int?> ObterCadastroParaAtualizacaoAsync(MySqlConnection conexao, TipoCadastro tipo, int id, MySqlTransaction transacao)
-        => conexao.QuerySingleOrDefaultAsync<int?>($"SELECT Id FROM {ObterTabela(tipo)} WHERE Id=@id FOR UPDATE", new { id }, transacao);
+    public Task<int?> ObterCadastroParaAtualizacaoAsync(SqlConnection conexao, TipoCadastro tipo, int id, SqlTransaction transacao)
+        => conexao.QuerySingleOrDefaultAsync<int?>($"SELECT Id FROM {ObterTabela(tipo)} WITH (UPDLOCK, HOLDLOCK) WHERE Id=@id", new { id }, transacao);
 
-    public Task<int> ContarVinculosAtivosAsync(MySqlConnection conexao, TipoCadastro tipo, int id, MySqlTransaction transacao)
+    public Task<int> ContarVinculosAtivosAsync(SqlConnection conexao, TipoCadastro tipo, int id, SqlTransaction transacao)
     {
         var consulta = tipo == TipoCadastro.Setor
             ? "SELECT COUNT(*) FROM funcionarios WHERE SetorId=@id AND Ativo=1"
@@ -42,9 +42,9 @@ public partial class RepositorioCadastros : IRepositorioCadastros
         return conexao.ExecuteScalarAsync<int>(consulta, new { id }, transacao);
     }
 
-    public Task<int> AtualizarCadastroAsync(MySqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, MySqlTransaction transacao)
+    public Task<int> AtualizarCadastroAsync(SqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, SqlTransaction transacao)
         => conexao.ExecuteAsync($"UPDATE {ObterTabela(tipo)} SET Nome=@Nome,Ativo=@Ativo,Observacoes=@Observacoes WHERE Id=@Id", cadastro, transacao);
 
-    public Task<int> InserirCadastroAsync(MySqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, MySqlTransaction transacao)
-        => conexao.ExecuteScalarAsync<int>($"INSERT INTO {ObterTabela(tipo)} (Nome,Ativo,Observacoes) VALUES (@Nome,@Ativo,@Observacoes); SELECT LAST_INSERT_ID()", cadastro, transacao);
+    public Task<int> InserirCadastroAsync(SqlConnection conexao, TipoCadastro tipo, Cadastro cadastro, SqlTransaction transacao)
+        => conexao.ExecuteScalarAsync<int>($"INSERT INTO {ObterTabela(tipo)} (Nome,Ativo,Observacoes) VALUES (@Nome,@Ativo,@Observacoes); SELECT CAST(SCOPE_IDENTITY() AS int)", cadastro, transacao);
 }

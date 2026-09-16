@@ -13,7 +13,7 @@ public class ServicoManutencoes(Banco banco, IRepositorioEquipamentos repositori
         if (manutencao.DataEntrada == default || manutencao.DataSaida < manutencao.DataEntrada) throw new ArgumentException("As datas da manutenção são inválidas.");
         if (manutencao.DataSaida.HasValue && string.IsNullOrWhiteSpace(manutencao.Solucao)) throw new ArgumentException("Informe a solução antes de finalizar a manutenção.");
         await using var conexao = await banco.AbrirAsync();
-        await using var transacao = await conexao.BeginTransactionAsync();
+        await using var transacao = (Microsoft.Data.SqlClient.SqlTransaction)await conexao.BeginTransactionAsync();
         var anterior = await repositorio.ObterParaAtualizacaoAsync(conexao, new { Id = manutencao.EquipamentoId }, transacao) ?? throw new KeyNotFoundException();
         var novo = JsonSerializer.Deserialize<Equipamento>(JsonSerializer.Serialize(anterior))!;
         if (manutencao.Id == 0)

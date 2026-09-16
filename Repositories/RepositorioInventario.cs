@@ -1,12 +1,12 @@
 using Dapper;
 using JcaInventario.Interfaces.Repositories;
-using MySqlConnector;
+using Microsoft.Data.SqlClient;
 
 namespace JcaInventario.Repositories;
 
 public class RepositorioInventario : IRepositorioInventario
 {
-    public Task<IEnumerable<JcaInventario.Models.ItemRelatorioInventario>> ListarRelatorioAsync(MySqlConnection conexao, int id, MySqlTransaction transacao)
+    public Task<IEnumerable<JcaInventario.Models.ItemRelatorioInventario>> ListarRelatorioAsync(SqlConnection conexao, int id, SqlTransaction transacao)
         => conexao.QueryAsync<JcaInventario.Models.ItemRelatorioInventario>("""
             SELECT c.EquipamentoId,c.Situacao,c.Observacao,c.Data,u.Nome Usuario,e.*
             FROM conferencias c JOIN inventario_equipamentos e ON e.ConferenciaId=c.Id
@@ -27,23 +27,23 @@ public class RepositorioInventario : IRepositorioInventario
         LEFT JOIN setores sa ON sa.Id=m.SetorAnteriorId LEFT JOIN setores sn ON sn.Id=m.NovoSetorId
         """;
 
-    public Task<IEnumerable<dynamic>> ListarMovimentacoesAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<IEnumerable<dynamic>> ListarMovimentacoesAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync(ConsultaMovimentacoes + " ORDER BY m.Id DESC", parametros, transacao);
 
-    public Task<IEnumerable<dynamic>> ListarManutencoesAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<IEnumerable<dynamic>> ListarManutencoesAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync("SELECT m.*,e.NumeroPatrimonio,e.Modelo FROM manutencoes m JOIN equipamentos e ON e.Id=m.EquipamentoId ORDER BY m.Id DESC", parametros, transacao);
 
-    public Task<IEnumerable<dynamic>> ListarInventariosAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<IEnumerable<dynamic>> ListarInventariosAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync("""
-            SELECT i.*, COUNT(c.Id) Total, COALESCE(SUM(c.Situacao='Conferido'),0) Conferidos,
-            COALESCE(SUM(c.Situacao='Pendente'),0) Pendentes, COALESCE(SUM(c.Situacao='Divergência'),0) Divergencias
-            FROM inventarios i LEFT JOIN conferencias c ON c.InventarioId=i.Id GROUP BY i.Id ORDER BY i.Id DESC
+            SELECT i.*, COUNT(c.Id) Total, COALESCE(SUM(CASE WHEN c.Situacao='Conferido' THEN 1 ELSE 0 END),0) Conferidos,
+            COALESCE(SUM(CASE WHEN c.Situacao='Pendente' THEN 1 ELSE 0 END),0) Pendentes, COALESCE(SUM(CASE WHEN c.Situacao='Divergência' THEN 1 ELSE 0 END),0) Divergencias
+            FROM inventarios i LEFT JOIN conferencias c ON c.InventarioId=i.Id GROUP BY i.Id,i.Nome,i.Data,i.Encerrado,i.UsuarioId ORDER BY i.Id DESC
             """, parametros, transacao);
 
-    public Task<int> InserirInventarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.ExecuteScalarAsync<int>("INSERT INTO inventarios (Nome,UsuarioId) VALUES (@Nome,@usuario); SELECT LAST_INSERT_ID()", parametros, transacao);
+    public Task<int> InserirInventarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
+        => conexao.ExecuteScalarAsync<int>("INSERT INTO inventarios (Nome,UsuarioId) VALUES (@Nome,@usuario); SELECT CAST(SCOPE_IDENTITY() AS int)", parametros, transacao);
 
-    public Task<int> InserirConferenciasAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<int> InserirConferenciasAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.ExecuteAsync("""
             INSERT INTO conferencias (InventarioId,EquipamentoId)
             SELECT @id,Id FROM equipamentos WHERE Status NOT IN ('Baixado','Inativo');
@@ -56,10 +56,10 @@ public class RepositorioInventario : IRepositorioInventario
             WHERE c.InventarioId=@id;
             """, parametros, transacao);
 
-    public Task<dynamic> ObterInventarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<dynamic> ObterInventarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QuerySingleOrDefaultAsync("SELECT * FROM inventarios WHERE Id=@id", parametros, transacao);
 
-    public Task<IEnumerable<dynamic>> ListarConferenciasAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<IEnumerable<dynamic>> ListarConferenciasAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync("""
             SELECT c.*,e.NumeroPatrimonio,e.Marca,e.Modelo,e.NumeroSerie,e.Tipo,e.Localizacao,e.Status,
               e.Responsavel,e.Setor,e.CapturadoEm,e.CapturadoNaCriacao,u.Nome Usuario
@@ -68,41 +68,41 @@ public class RepositorioInventario : IRepositorioInventario
             WHERE c.InventarioId=@id ORDER BY e.Setor,e.NumeroPatrimonio,c.EquipamentoId
             """, parametros, transacao);
 
-    public Task<dynamic> ObterInventarioParaAtualizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.QuerySingleOrDefaultAsync("SELECT * FROM inventarios WHERE Id=@id FOR UPDATE", parametros, transacao);
+    public Task<dynamic> ObterInventarioParaAtualizacaoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
+        => conexao.QuerySingleOrDefaultAsync("SELECT * FROM inventarios WITH (UPDLOCK, HOLDLOCK) WHERE Id=@id", parametros, transacao);
 
-    public Task<dynamic> ObterConferenciaParaAtualizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.QuerySingleOrDefaultAsync("SELECT * FROM conferencias WHERE InventarioId=@id AND EquipamentoId=@equipamentoId FOR UPDATE", parametros, transacao);
+    public Task<dynamic> ObterConferenciaParaAtualizacaoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
+        => conexao.QuerySingleOrDefaultAsync("SELECT * FROM conferencias WITH (UPDLOCK, HOLDLOCK) WHERE InventarioId=@id AND EquipamentoId=@equipamentoId", parametros, transacao);
 
-    public Task<int> AtualizarConferenciaAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<int> AtualizarConferenciaAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.ExecuteAsync("UPDATE conferencias SET Situacao=@Situacao,Observacao=@Observacao,Data=CURRENT_TIMESTAMP,UsuarioId=@usuario WHERE InventarioId=@id AND EquipamentoId=@equipamentoId", parametros, transacao);
 
-    public Task<int> ContarPendentesAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<int> ContarPendentesAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM conferencias WHERE InventarioId=@id AND Situacao='Pendente'", parametros, transacao);
 
-    public Task<int> EncerrarInventarioAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<int> EncerrarInventarioAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.ExecuteAsync("UPDATE inventarios SET Encerrado=1 WHERE Id=@id", parametros, transacao);
 
-    public Task<dynamic> ObterTotaisAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<dynamic> ObterTotaisAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QuerySingleAsync("""
-            SELECT COUNT(*) Total, COALESCE(SUM(Status='Em uso'),0) EmUso, COALESCE(SUM(Status='Em estoque'),0) EmEstoque,
-            COALESCE(SUM(Status='Em manutenção'),0) EmManutencao, COALESCE(SUM(Localizacao='Home Office'),0) HomeOffice,
-            COALESCE(SUM(Status='Baixado'),0) Baixados, COALESCE(SUM(ResponsavelId IS NULL),0) SemResponsavel,
-            COALESCE(SUM(NumeroPatrimonio IS NULL),0) SemPatrimonio, COALESCE(SUM(NumeroSerie IS NULL),0) SemSerie FROM equipamentos
+            SELECT COUNT(*) Total, COALESCE(SUM(CASE WHEN Status='Em uso' THEN 1 ELSE 0 END),0) EmUso, COALESCE(SUM(CASE WHEN Status='Em estoque' THEN 1 ELSE 0 END),0) EmEstoque,
+            COALESCE(SUM(CASE WHEN Status='Em manutenção' THEN 1 ELSE 0 END),0) EmManutencao, COALESCE(SUM(CASE WHEN Localizacao='Home Office' THEN 1 ELSE 0 END),0) HomeOffice,
+            COALESCE(SUM(CASE WHEN Status='Baixado' THEN 1 ELSE 0 END),0) Baixados, COALESCE(SUM(CASE WHEN ResponsavelId IS NULL THEN 1 ELSE 0 END),0) SemResponsavel,
+            COALESCE(SUM(CASE WHEN NumeroPatrimonio IS NULL THEN 1 ELSE 0 END),0) SemPatrimonio, COALESCE(SUM(CASE WHEN NumeroSerie IS NULL THEN 1 ELSE 0 END),0) SemSerie FROM equipamentos
             """, parametros, transacao);
 
-    public Task<IEnumerable<dynamic>> AgruparPorSetorAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<IEnumerable<dynamic>> AgruparPorSetorAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync("SELECT COALESCE(s.Nome,'Sem setor') Nome,COUNT(*) Total FROM equipamentos e LEFT JOIN funcionarios f ON f.Id=e.ResponsavelId LEFT JOIN setores s ON s.Id=f.SetorId GROUP BY s.Nome ORDER BY Total DESC", parametros, transacao);
 
-    public Task<IEnumerable<dynamic>> AgruparPorLocalizacaoAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<IEnumerable<dynamic>> AgruparPorLocalizacaoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync("SELECT Localizacao Nome,COUNT(*) Total FROM equipamentos GROUP BY Localizacao ORDER BY Total DESC", parametros, transacao);
 
-    public Task<IEnumerable<dynamic>> AgruparPorStatusAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<IEnumerable<dynamic>> AgruparPorStatusAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync("SELECT Status Nome,COUNT(*) Total FROM equipamentos GROUP BY Status ORDER BY Total DESC", parametros, transacao);
 
-    public Task<int> ContarEquipamentosPendentesAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
+    public Task<int> ContarEquipamentosPendentesAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.ExecuteScalarAsync<int>("SELECT COUNT(DISTINCT c.EquipamentoId) FROM conferencias c JOIN inventarios i ON i.Id=c.InventarioId WHERE c.Situacao='Pendente' AND i.Encerrado=0", parametros, transacao);
 
-    public Task<IEnumerable<dynamic>> ListarMovimentacoesRecentesAsync(MySqlConnection conexao, object? parametros = null, MySqlTransaction? transacao = null)
-        => conexao.QueryAsync(ConsultaMovimentacoes + " ORDER BY m.Id DESC LIMIT 8", parametros, transacao);
+    public Task<IEnumerable<dynamic>> ListarMovimentacoesRecentesAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
+        => conexao.QueryAsync(ConsultaMovimentacoes.Replace("SELECT m.*", "SELECT TOP (8) m.*") + " ORDER BY m.Id DESC", parametros, transacao);
 }
