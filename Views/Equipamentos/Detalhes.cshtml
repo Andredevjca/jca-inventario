@@ -4,6 +4,35 @@
     var movimentacoes = Formatador.Lista(Model.movimentacoes);
     var manutencoes = Formatador.Lista(Model.manutencoes);
     var historico = Formatador.Lista((object?)Model.historico);
+    DateTime? dataAquisicao = equipamento.DataAquisicao as DateTime?;
+    var hoje = DateTime.Today;
+    var tempoEquipamento = "Data de aquisição não informada";
+    var mensagemGarantia = "Garantia não calculada";
+    var classeGarantia = "status-cancelado";
+
+    if (dataAquisicao.HasValue && dataAquisicao.Value.Date <= hoje)
+    {
+        var aquisicao = dataAquisicao.Value.Date;
+        var anos = hoje.Year - aquisicao.Year;
+        if (aquisicao.AddYears(anos) > hoje) anos--;
+        var aniversario = aquisicao.AddYears(anos);
+        var meses = (hoje.Year - aniversario.Year) * 12 + hoje.Month - aniversario.Month;
+        if (aniversario.AddMonths(meses) > hoje) meses--;
+        var dias = (hoje - aniversario.AddMonths(meses)).Days;
+        var partes = new List<string>();
+        if (anos > 0) partes.Add($"{anos} {(anos == 1 ? "ano" : "anos")}");
+        if (meses > 0) partes.Add($"{meses} {(meses == 1 ? "mês" : "meses")}");
+        if (dias > 0 || partes.Count == 0) partes.Add($"{dias} {(dias == 1 ? "dia" : "dias")}");
+        tempoEquipamento = string.Join(", ", partes);
+
+        var dentroDaGarantia = hoje <= aquisicao.AddYears(1);
+        mensagemGarantia = dentroDaGarantia ? "Dentro do prazo de garantia" : "Fora da garantia";
+        classeGarantia = dentroDaGarantia ? "status-ativo" : "status-atrasado";
+    }
+    else if (dataAquisicao.HasValue)
+    {
+        tempoEquipamento = "Data de aquisição no futuro";
+    }
 }
 <div class="page-header">
     <div>
@@ -27,6 +56,9 @@
                 <div class="col-md-6"><dt>Patrimônio</dt><dd>@Formatador.Texto(equipamento.NumeroPatrimonio)</dd></div>
                 <div class="col-md-6"><dt>Número de série</dt><dd>@Formatador.Texto(equipamento.NumeroSerie)</dd></div>
                 <div class="col-md-6"><dt>Status</dt><dd><span class="status-badge @Formatador.ClasseStatus(Convert.ToString(equipamento.Status))">@equipamento.Status</span></dd></div>
+                <div class="col-md-6"><dt>Data de aquisição</dt><dd>@(dataAquisicao?.ToString("dd/MM/yyyy") ?? "Não informada")</dd></div>
+                <div class="col-md-6"><dt>Tempo desde a aquisição</dt><dd>@tempoEquipamento</dd></div>
+                <div class="col-md-6"><dt>Garantia</dt><dd><span class="status-badge @classeGarantia">@mensagemGarantia</span></dd></div>
             </dl>
         </section>
         <section class="content-card p-3 mb-3">
