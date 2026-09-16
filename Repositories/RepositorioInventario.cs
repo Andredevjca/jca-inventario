@@ -35,7 +35,7 @@ public class RepositorioInventario : IRepositorioInventario
 
     public Task<IEnumerable<dynamic>> ListarInventariosAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.QueryAsync("""
-            SELECT i.*, COUNT(c.Id) Total, COALESCE(SUM(CASE WHEN c.Situacao='Conferido' THEN 1 ELSE 0 END),0) Conferidos,
+            SELECT i.Id,i.Nome,i.Data,i.Encerrado,i.UsuarioId, COUNT(c.Id) Total, COALESCE(SUM(CASE WHEN c.Situacao='Conferido' THEN 1 ELSE 0 END),0) Conferidos,
             COALESCE(SUM(CASE WHEN c.Situacao='Pendente' THEN 1 ELSE 0 END),0) Pendentes, COALESCE(SUM(CASE WHEN c.Situacao='Divergência' THEN 1 ELSE 0 END),0) Divergencias
             FROM inventarios i LEFT JOIN conferencias c ON c.InventarioId=i.Id GROUP BY i.Id,i.Nome,i.Data,i.Encerrado,i.UsuarioId ORDER BY i.Id DESC
             """, parametros, transacao);
