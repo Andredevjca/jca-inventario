@@ -106,6 +106,16 @@ CREATE TABLE dbo.historico (
 CREATE INDEX ix_historico_data ON dbo.historico (EquipamentoId,Data);
 END;
 
+IF OBJECT_ID(N'dbo.equipamento_documentos', N'U') IS NULL
+BEGIN
+CREATE TABLE dbo.equipamento_documentos (
+ Id INT IDENTITY(1,1) PRIMARY KEY, EquipamentoId INT NOT NULL, NomeArquivo NVARCHAR(200) NOT NULL,
+ NomeOriginal NVARCHAR(260) NOT NULL, CriadoEm DATETIME2 NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (EquipamentoId) REFERENCES equipamentos(Id)
+);
+CREATE INDEX ix_equipamento_documentos_equipamento ON dbo.equipamento_documentos (EquipamentoId);
+END;
+
 IF OBJECT_ID(N'dbo.inventario_equipamentos', N'U') IS NULL
 BEGIN
 CREATE TABLE dbo.inventario_equipamentos (

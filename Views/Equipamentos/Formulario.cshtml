@@ -108,6 +108,18 @@
                 <label class="form-check mt-2"><input type="checkbox" name="removerFoto" value="true" class="form-check-input" /> Remover foto</label>
             }
         </div>
+        <div class="col-md-6">
+            <label class="form-label">Notas fiscais (PDF, até 3)</label>
+            <input type="file" name="notas" class="form-control" accept=".pdf" multiple />
+            <div class="form-text">Anexe até 3 arquivos PDF de no máximo 5 MB cada.</div>
+            @foreach (var documento in Formatador.Lista(ViewBag.Documentos))
+            {
+                <label class="form-check mt-2">
+                    <input type="checkbox" name="removerNotas" value="@documento.Id" class="form-check-input" />
+                    Remover @documento.NomeOriginal
+                </label>
+            }
+        </div>
     </div>
     <div class="mt-4 d-flex gap-2">
         <button class="btn btn-success btn-modern"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>

@@ -87,6 +87,7 @@ public class ServicoEquipamentos(Banco banco, IRepositorioEquipamentos repositor
         var movimentacoes = await repositorio.ListarMovimentacoesAsync(conexao, id);
         var manutencoes = await repositorio.ListarManutencoesAsync(conexao, id);
         var historico = await repositorio.ListarHistoricoAsync(conexao, id);
-        return new { equipamento, movimentacoes, manutencoes, historico };
+        var documentos = await repositorio.ListarDocumentosAsync(conexao, id);
+        return new { equipamento, movimentacoes, manutencoes, historico, documentos };
     }
 }

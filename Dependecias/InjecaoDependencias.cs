@@ -22,6 +22,7 @@ public static class InjecaoDependencias
         services.AddScoped<IServicoInventario, ServicoInventario>();
         services.AddScoped<IServicoManutencoes, ServicoManutencoes>();
         services.AddScoped<IServicoFotos, ServicoFotos>();
+        services.AddScoped<IServicoDocumentos, ServicoDocumentos>();
         services.AddScoped<IServicoTermos, ServicoTermos>();
         services.AddScoped<IServicoConta, ServicoConta>();
         services.AddScoped<ServicoInicializacao>();

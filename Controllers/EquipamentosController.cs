@@ -9,16 +9,20 @@ namespace JcaInventario.Controllers;
 
 public class EquipamentosController : PainelController
 {
+    private const long LimiteEnvio = 26 * 1024 * 1024;
+
     private readonly IServicoEquipamentos _servico;
     private readonly IServicoCadastros _cadastros;
     private readonly IServicoFotos _fotos;
+    private readonly IServicoDocumentos _documentos;
     private readonly IServicoTermos _termos;
 
-    public EquipamentosController(IServicoEquipamentos servico, IServicoCadastros cadastros, IServicoFotos fotos, IServicoTermos termos)
+    public EquipamentosController(IServicoEquipamentos servico, IServicoCadastros cadastros, IServicoFotos fotos, IServicoDocumentos documentos, IServicoTermos termos)
     {
         _servico = servico;
         _cadastros = cadastros;
         _fotos = fotos;
+        _documentos = documentos;
         _termos = termos;
     }
 
@@ -63,11 +67,12 @@ public class EquipamentosController : PainelController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [RequestSizeLimit(6 * 1024 * 1024)]
-    public async Task<IActionResult> Criar(Equipamento equipamento, IFormFile? arquivo)
+    [RequestSizeLimit(LimiteEnvio)]
+    [RequestFormLimits(MultipartBodyLengthLimit = LimiteEnvio)]
+    public async Task<IActionResult> Criar(Equipamento equipamento, IFormFile? arquivo, List<IFormFile>? notas)
     {
         ViewData["Title"] = "Novo equipamento";
-        return await Salvar(equipamento, arquivo, false);
+        return await Salvar(equipamento, arquivo, notas, null, false);
     }
 
     public async Task<IActionResult> Editar(int id)
@@ -76,7 +81,7 @@ public class EquipamentosController : PainelController
         try
         {
             dynamic dados = await _servico.ObterDetalhesAsync(id);
-            await CarregarOpcoes();
+            await CarregarOpcoes(id);
             return View("Formulario", Mapear(dados.equipamento));
         }
         catch (KeyNotFoundException)
@@ -87,12 +92,13 @@ public class EquipamentosController : PainelController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [RequestSizeLimit(6 * 1024 * 1024)]
-    public async Task<IActionResult> Editar(int id, Equipamento equipamento, IFormFile? arquivo, bool removerFoto = false)
+    [RequestSizeLimit(LimiteEnvio)]
+    [RequestFormLimits(MultipartBodyLengthLimit = LimiteEnvio)]
+    public async Task<IActionResult> Editar(int id, Equipamento equipamento, IFormFile? arquivo, List<IFormFile>? notas, int[]? removerNotas, bool removerFoto = false)
     {
         ViewData["Title"] = "Editar equipamento";
         equipamento.Id = id;
-        return await Salvar(equipamento, arquivo, removerFoto);
+        return await Salvar(equipamento, arquivo, notas, removerNotas, removerFoto);
     }
 
     public async Task<IActionResult> Movimentar(int id)
@@ -155,17 +161,24 @@ public class EquipamentosController : PainelController
         return foto == null ? NotFound() : PhysicalFile(foto.Caminho, foto.TipoConteudo);
     }
 
-    private async Task<IActionResult> Salvar(Equipamento modelo, IFormFile? arquivo, bool removerFoto)
+    public async Task<IActionResult> NotaFiscal(int id, int documentoId)
+    {
+        var arquivo = await _documentos.ObterAsync(id, documentoId);
+        return arquivo == null ? NotFound() : PhysicalFile(arquivo.Caminho, arquivo.TipoConteudo, arquivo.NomeOriginal);
+    }
+
+    private async Task<IActionResult> Salvar(Equipamento modelo, IFormFile? arquivo, List<IFormFile>? notas, int[]? removerNotas, bool removerFoto)
     {
         if (!ModelState.IsValid)
         {
-            await CarregarOpcoes();
+            await CarregarOpcoes(modelo.Id);
             return View("Formulario", modelo);
         }
 
         try
         {
             var id = await _servico.SalvarAsync(modelo, UsuarioAtual);
+            modelo.Id = id;
             if (arquivo is { Length: > 0 })
             {
                 await using var conteudo = arquivo.OpenReadStream();
@@ -174,23 +187,40 @@ public class EquipamentosController : PainelController
             else if (removerFoto)
                 await _fotos.RemoverAsync(id, UsuarioAtual);
 
+            var novos = (notas ?? []).Where(nota => nota.Length > 0).ToList();
+            var remover = removerNotas ?? [];
+            if (novos.Count > 0 || remover.Length > 0)
+            {
+                var enviados = novos.Select(nota => new ArquivoEnviado(nota.FileName, nota.Length, nota.OpenReadStream())).ToList();
+                try
+                {
+                    await _documentos.AtualizarAsync(id, enviados, remover, UsuarioAtual);
+                }
+                finally
+                {
+                    foreach (var enviado in enviados)
+                        await enviado.Conteudo.DisposeAsync();
+                }
+            }
+
             TempData["Sucesso"] = "Equipamento salvo com sucesso.";
             return RedirectToAction(nameof(Detalhes), new { id });
         }
         catch (Exception ex)
         {
             ModelState.AddModelError(string.Empty, ex.Message);
-            await CarregarOpcoes();
+            await CarregarOpcoes(modelo.Id);
             return View("Formulario", modelo);
         }
     }
 
-    private async Task CarregarOpcoes()
+    private async Task CarregarOpcoes(int equipamentoId = 0)
     {
         ViewBag.Tipos = Formatador.Lista(await _cadastros.ListarAsync("tipos"));
         ViewBag.Funcionarios = Formatador.Lista(await _cadastros.ListarAsync("funcionarios"));
         ViewBag.Status = OpcoesInventario.Status;
         ViewBag.Localizacoes = OpcoesInventario.Localizacoes;
+        ViewBag.Documentos = equipamentoId > 0 ? await _documentos.ListarAsync(equipamentoId) : Array.Empty<EquipamentoDocumento>();
     }
 
     private static Equipamento Mapear(dynamic item) => new()

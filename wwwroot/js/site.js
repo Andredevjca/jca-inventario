@@ -1,20 +1,7 @@
 (() => {
+  "use strict";
+
   const corpo = document.body;
-  const inicializarPagina = () => {
-  document.querySelectorAll("[data-vinculo-equipamento]").forEach((formulario) => {
-    const responsavel = formulario.querySelector('[name="ResponsavelId"]');
-    const status = formulario.querySelector('[name="Status"]');
-    const localizacao = formulario.querySelector('[name="Localizacao"]');
-    responsavel?.addEventListener("change", () => {
-      if (!responsavel.value || !status || !localizacao) return;
-      if (status.value !== "Em estoque" && status.value !== "Disponível") return;
-      status.value = localizacao.value === "Home Office" ? "Home Office" : "Em uso";
-      if (localizacao.value === "Estoque") localizacao.value = "Escritório";
-    });
-  });
-  };
-  inicializarPagina();
-  document.addEventListener("app:navigated", inicializarPagina);
   const botaoSidebar = document.getElementById("botaoSidebar");
   const backdrop = document.getElementById("sidebarBackdrop");
   const telaPequena = () => window.matchMedia("(max-width: 991.98px)").matches;

@@ -12,6 +12,10 @@ public interface IRepositorioEquipamentos
     Task<IEnumerable<dynamic>> ListarHistoricoAsync(SqlConnection conexao, int id);
     Task<int> AtualizarFotoAsync(SqlConnection conexao, int id, string? nome, SqlTransaction transacao);
     Task<string?> ObterFotoAsync(SqlConnection conexao, int id);
+    Task<IEnumerable<EquipamentoDocumento>> ListarDocumentosAsync(SqlConnection conexao, int equipamentoId, SqlTransaction? transacao = null);
+    Task<EquipamentoDocumento?> ObterDocumentoAsync(SqlConnection conexao, int equipamentoId, int id, SqlTransaction? transacao = null);
+    Task<int> InserirDocumentoAsync(SqlConnection conexao, EquipamentoDocumento documento, SqlTransaction transacao);
+    Task<int> RemoverDocumentoAsync(SqlConnection conexao, int equipamentoId, int id, SqlTransaction transacao);
     Task<int> InserirHistoricoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
     Task<bool> ResponsavelAtivoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);
     Task<bool> TipoAtivoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null);

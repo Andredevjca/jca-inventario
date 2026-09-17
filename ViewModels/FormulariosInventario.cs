@@ -37,4 +37,8 @@ public class NovoInventarioViewModel
 
 public record FotoDisponivel(string Caminho, string TipoConteudo);
 
+public record DocumentoDisponivel(string Caminho, string TipoConteudo, string NomeOriginal);
+
+public record ArquivoEnviado(string NomeArquivo, long Tamanho, Stream Conteudo);
+
 public record ArquivoGerado(byte[] Conteudo, string TipoConteudo, string Nome);

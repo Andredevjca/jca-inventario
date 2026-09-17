@@ -4,6 +4,7 @@
     var movimentacoes = Formatador.Lista(Model.movimentacoes);
     var manutencoes = Formatador.Lista(Model.manutencoes);
     var historico = Formatador.Lista((object?)Model.historico);
+    var documentos = Formatador.Lista((object?)Model.documentos);
     DateTime? dataAquisicao = equipamento.DataAquisicao as DateTime?;
     var hoje = DateTime.Today;
     var tempoEquipamento = "Data de aquisição não informada";
@@ -82,6 +83,21 @@
             {
                 <span class="foto-detalhe d-grid sem-foto"><i class="fa-solid fa-laptop"></i></span>
             }
+        </section>
+        <section class="content-card p-3 mb-3">
+            <h2 class="fw-bold mb-3">Notas fiscais</h2>
+            <div class="d-grid gap-2">
+                @foreach (var nota in documentos)
+                {
+                    <a class="btn btn-outline-secondary" asp-action="NotaFiscal" asp-route-id="@equipamento.Id" asp-route-documentoId="@nota.Id" data-no-spa>
+                        <i class="fa-solid fa-file-pdf"></i> @nota.NomeOriginal
+                    </a>
+                }
+                @if (!documentos.Any())
+                {
+                    <p class="text-muted mb-0">Nenhuma nota fiscal anexada.</p>
+                }
+            </div>
         </section>
         <section class="content-card p-3 mb-3">
             <div class="d-grid gap-2">

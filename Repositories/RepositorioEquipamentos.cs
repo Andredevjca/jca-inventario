@@ -28,6 +28,18 @@ public class RepositorioEquipamentos : IRepositorioEquipamentos
     public Task<string?> ObterFotoAsync(SqlConnection conexao, int id)
         => conexao.ExecuteScalarAsync<string?>("SELECT Foto FROM equipamentos WHERE Id=@id", new { id });
 
+    public Task<IEnumerable<EquipamentoDocumento>> ListarDocumentosAsync(SqlConnection conexao, int equipamentoId, SqlTransaction? transacao = null)
+        => conexao.QueryAsync<EquipamentoDocumento>("SELECT * FROM equipamento_documentos WHERE EquipamentoId=@equipamentoId ORDER BY Id", new { equipamentoId }, transacao);
+
+    public Task<EquipamentoDocumento?> ObterDocumentoAsync(SqlConnection conexao, int equipamentoId, int id, SqlTransaction? transacao = null)
+        => conexao.QuerySingleOrDefaultAsync<EquipamentoDocumento>("SELECT * FROM equipamento_documentos WHERE Id=@id AND EquipamentoId=@equipamentoId", new { id, equipamentoId }, transacao);
+
+    public Task<int> InserirDocumentoAsync(SqlConnection conexao, EquipamentoDocumento documento, SqlTransaction transacao)
+        => conexao.ExecuteScalarAsync<int>("INSERT INTO equipamento_documentos (EquipamentoId,NomeArquivo,NomeOriginal) VALUES (@EquipamentoId,@NomeArquivo,@NomeOriginal); SELECT CAST(SCOPE_IDENTITY() AS int)", documento, transacao);
+
+    public Task<int> RemoverDocumentoAsync(SqlConnection conexao, int equipamentoId, int id, SqlTransaction transacao)
+        => conexao.ExecuteAsync("DELETE FROM equipamento_documentos WHERE Id=@id AND EquipamentoId=@equipamentoId", new { id, equipamentoId }, transacao);
+
     public Task<int> InserirHistoricoAsync(SqlConnection conexao, object? parametros = null, SqlTransaction? transacao = null)
         => conexao.ExecuteAsync("INSERT INTO historico (EquipamentoId,UsuarioId,Descricao,DadosAnteriores,DadosNovos) VALUES (@id,@usuario,@descricao,@antes,@depois)", parametros, transacao);
 
