@@ -24,7 +24,7 @@
                     <tr>
                         <td>@item.Nome</td>
                         <td><span class="status-badge @Formatador.ClasseStatus(ativo ? "Ativo" : "Inativo")">@(ativo ? "Ativo" : "Inativo")</span></td>
-                        <td class="alinhar_a_direita"><a class="btn btn-sm btn-outline-secondary" asp-action="Editar" asp-route-id="@item.Id"><i class="fa-solid fa-pen"></i></a></td>
+                        <td class="alinhar_a_direita"><a class="btn btn-sm btn-icone-editar" asp-action="Editar" asp-route-id="@item.Id"><i class="fa-solid fa-pen"></i></a></td>
                     </tr>
                 }
             </tbody>

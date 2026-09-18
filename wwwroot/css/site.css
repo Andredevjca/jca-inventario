@@ -481,7 +481,7 @@ body.sidebar-collapsed .app-content {
     font-weight: 600;
 }
 
-.btn-success {
+.btn-primary {
     --bs-btn-bg: #294b8f;
     --bs-btn-border-color: #294b8f;
     --bs-btn-hover-bg: #203b70;
@@ -761,4 +761,25 @@ body.login-body .login-btn {
 
 .alinhar_a_direita {
     text-align: right;
+}
+
+.btn i.fa-solid::before {
+    font-size: 10px !important;
+}
+
+.btn-icone-editar {
+    color: #294b8f;
+    background-color: #fff;
+    border: 1px solid #294b8f;
+    border-radius: 4px;
+}
+
+.btn-icone-editar:hover {
+    color: #fff;
+    background-color: #294b8f;
+    border-color: #294b8f;
+}
+
+.btn-icone-editar i {
+    font-size: 12px;
 }
