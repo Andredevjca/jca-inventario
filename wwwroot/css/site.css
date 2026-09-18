@@ -799,3 +799,17 @@ body.login-body .login-btn {
     .btn-icone-editar i {
         font-size: 12px;
     }
+
+.select-situacao {
+    width: 100px;
+    flex: 0 0 100px;
+}
+
+.btn-salvar {
+    min-width: 70px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}

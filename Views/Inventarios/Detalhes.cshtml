@@ -20,7 +20,7 @@
             <a class="btn btn-outline-secondary" asp-action="Pdf" asp-route-id="@inventario.Id" data-no-spa><i class="fa-solid fa-file-pdf"></i> Exportar PDF por setor</a>
             @if (!encerrado)
             {
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalExclusao" data-url="@Url.Action("Encerrar", new { id = inventario.Id })" data-mensagem="Encerrar este inventário? As conferências ficarão apenas para consulta.">Encerrar inventário</button>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalExclusao" data-url="@Url.Action("Encerrar", new { id = inventario.Id })" data-mensagem="Encerrar este inventário? As conferências ficarão apenas para consulta.">Encerrar inventário</button>
             }
         </div>
     </div>
@@ -55,13 +55,13 @@
                                 <form asp-action="Conferir" asp-route-id="@inventario.Id" method="post" class="d-flex gap-2">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="equipamentoId" value="@item.EquipamentoId" />
-                                    <select name="Situacao" class="form-select form-select-sm">
+                                    <select name="Situacao" class="form-select select-situacao">
                                         <option selected="@(Convert.ToString(item.Situacao) == "Conferido")">Conferido</option>
                                         <option selected="@(Convert.ToString(item.Situacao) == "Pendente")">Pendente</option>
                                         <option selected="@(Convert.ToString(item.Situacao) == "Divergência")">Divergência</option>
                                     </select>
-                                    <input name="Observacao" class="form-control form-control-sm" placeholder="Obs." value="@item.Observacao" />
-                                    <button class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+                                    <input name="Observacao" class="form-control" placeholder="Obs." value="@item.Observacao" />
+                                    <button class="btn btn-sm btn-primary btn-salvar"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
                                 </form>
                             }
                         </td>
