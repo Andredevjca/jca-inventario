@@ -313,7 +313,7 @@ body.sidebar-collapsed .app-content {
 
     .form-check-input:focus {
         border-color: #4268b0;
-        box-shadow: 0 0 0 .2rem rgba(41, 75, 143, .18);
+        box-shadow: none;
     }
 
     .form-check-input:checked {
